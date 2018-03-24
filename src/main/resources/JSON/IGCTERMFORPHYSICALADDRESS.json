@@ -1,0 +1,175 @@
+{
+  "created_by": "Administrator IIS",
+  "modified_on": "2017-08-31T10:21:32Z",
+  "_context": [
+    {
+      "_type": "category",
+      "_id": "6662c0f2.ee6a64fe.7pi57grci.81rkqa1.2qtft0.5i470h5i684p3bq1ervkg",
+      "_url": "https://10.11.13.155:9445/ibm/iis/igc-rest/v1/assets/6662c0f2.ee6a64fe.7pi57grci.81rkqa1.2qtft0.5i470h5i684p3bq1ervkg",
+      "_name": "Physical Address"
+    }
+  ],
+  "status": "CANDIDATE",
+  "created_on": "2017-08-29T10:30:50Z",
+  "has_a_term": {
+    "items": [
+      {
+        "_type": "term",
+        "_id": "6662c0f2.e1b1ec6c.7pi57grci.83eha14.bna5v5.l30vp2mcls1s6q17ika89",
+        "_url": "https://10.11.13.155:9445/ibm/iis/igc-rest/v1/assets/6662c0f2.e1b1ec6c.7pi57grci.83eha14.bna5v5.l30vp2mcls1s6q17ika89",
+        "_name": "City"
+      },
+      {
+        "_type": "term",
+        "_id": "6662c0f2.e1b1ec6c.7pi57grci.80990sg.e1jov6.kidc0j87bg3t320lccedc",
+        "_url": "https://10.11.13.155:9445/ibm/iis/igc-rest/v1/assets/6662c0f2.e1b1ec6c.7pi57grci.80990sg.e1jov6.kidc0j87bg3t320lccedc",
+        "_name": "Postal Code"
+      },
+      {
+        "_type": "term",
+        "_id": "6662c0f2.e1b1ec6c.7pi57grci.808rrhg.qe92ng.imsh5b29gie3jfa7mhd31",
+        "_url": "https://10.11.13.155:9445/ibm/iis/igc-rest/v1/assets/6662c0f2.e1b1ec6c.7pi57grci.808rrhg.qe92ng.imsh5b29gie3jfa7mhd31",
+        "_name": "State"
+      },
+      {
+        "_type": "term",
+        "_id": "6662c0f2.e1b1ec6c.7pi57grci.7v72m01.9krt6j.e29vpdmdfah055hlgv301",
+        "_url": "https://10.11.13.155:9445/ibm/iis/igc-rest/v1/assets/6662c0f2.e1b1ec6c.7pi57grci.7v72m01.9krt6j.e29vpdmdfah055hlgv301",
+        "_name": "Street Name"
+      },
+      {
+        "_type": "term",
+        "_id": "6662c0f2.e1b1ec6c.7pi57grci.82u2ad0.vpp63k.ftq6fc6d817sdc4uk5bgv",
+        "_url": "https://10.11.13.155:9445/ibm/iis/igc-rest/v1/assets/6662c0f2.e1b1ec6c.7pi57grci.82u2ad0.vpp63k.ftq6fc6d817sdc4uk5bgv",
+        "_name": "Unit Designation"
+      }
+    ],
+    "paging": {
+      "numTotal": 5,
+      "pageSize": 5,
+      "end": 4,
+      "begin": 0
+    }
+  },
+  "parent_category": {
+    "_type": "category",
+    "_id": "6662c0f2.ee6a64fe.7pi57grci.81rkqa1.2qtft0.5i470h5i684p3bq1ervkg",
+    "_url": "https://10.11.13.155:9445/ibm/iis/igc-rest/v1/assets/6662c0f2.ee6a64fe.7pi57grci.81rkqa1.2qtft0.5i470h5i684p3bq1ervkg",
+    "_name": "Physical Address"
+  },
+  "has_a": {
+    "items": [
+      {
+        "_type": "term",
+        "_id": "6662c0f2.e1b1ec6c.7pi57grci.83eha14.bna5v5.l30vp2mcls1s6q17ika89",
+        "_url": "https://10.11.13.155:9445/ibm/iis/igc-rest/v1/assets/6662c0f2.e1b1ec6c.7pi57grci.83eha14.bna5v5.l30vp2mcls1s6q17ika89",
+        "_name": "City"
+      },
+      {
+        "_type": "term",
+        "_id": "6662c0f2.e1b1ec6c.7pi57grci.80990sg.e1jov6.kidc0j87bg3t320lccedc",
+        "_url": "https://10.11.13.155:9445/ibm/iis/igc-rest/v1/assets/6662c0f2.e1b1ec6c.7pi57grci.80990sg.e1jov6.kidc0j87bg3t320lccedc",
+        "_name": "Postal Code"
+      },
+      {
+        "_type": "term",
+        "_id": "6662c0f2.e1b1ec6c.7pi57grci.808rrhg.qe92ng.imsh5b29gie3jfa7mhd31",
+        "_url": "https://10.11.13.155:9445/ibm/iis/igc-rest/v1/assets/6662c0f2.e1b1ec6c.7pi57grci.808rrhg.qe92ng.imsh5b29gie3jfa7mhd31",
+        "_name": "State"
+      },
+      {
+        "_type": "term",
+        "_id": "6662c0f2.e1b1ec6c.7pi57grci.7v72m01.9krt6j.e29vpdmdfah055hlgv301",
+        "_url": "https://10.11.13.155:9445/ibm/iis/igc-rest/v1/assets/6662c0f2.e1b1ec6c.7pi57grci.7v72m01.9krt6j.e29vpdmdfah055hlgv301",
+        "_name": "Street Name"
+      },
+      {
+        "_type": "term",
+        "_id": "6662c0f2.e1b1ec6c.7pi57grci.82u2ad0.vpp63k.ftq6fc6d817sdc4uk5bgv",
+        "_url": "https://10.11.13.155:9445/ibm/iis/igc-rest/v1/assets/6662c0f2.e1b1ec6c.7pi57grci.82u2ad0.vpp63k.ftq6fc6d817sdc4uk5bgv",
+        "_name": "Unit Designation"
+      }
+    ],
+    "paging": {
+      "numTotal": 5,
+      "next": "https://10.11.13.155:9445/ibm/iis/igc-rest/v1/assets/6662c0f2.e1b1ec6c.7pi57grci.8092em3.s01ctp.dgqur12lujl7q79met7sq/has_a?begin=1&pageSize=2147483000",
+      "pageSize": 5,
+      "end": 0,
+      "begin": 0
+    }
+  },
+  "_name": "Street Address",
+  "type": "NONE",
+  "_type": "term",
+  "is_modifier": false,
+  "long_description": "The street address is composed of a proper name or number and a designation of the type of route and its direction, as well as the city, state, and postal code.",
+  "_id": "6662c0f2.e1b1ec6c.7pi57grci.8092em3.s01ctp.dgqur12lujl7q79met7sq",
+  "short_description": "Describes a place on a route, according to the postal authority, on which a physical structure is located.",
+  "modified_by": "Administrator IIS",
+  "_url": "https://10.11.13.155:9445/ibm/iis/igc-rest/v1/assets/6662c0f2.e1b1ec6c.7pi57grci.8092em3.s01ctp.dgqur12lujl7q79met7sq",
+  "name": "Street Address",
+  "development_log": {
+    "items": [
+      {
+        "person": "Administrator IIS",
+        "new_state": "Synched",
+        "workflow_task": "NEW",
+        "user_id": "isadmin",
+        "comment": "Approved for IGCConnect",
+        "date": "2017-08-31T10:21:32Z",
+        "activity": "PUBLISHED"
+      },
+      {
+        "person": "Administrator IIS",
+        "new_state": "Approved",
+        "workflow_task": "NEW",
+        "user_id": "isadmin",
+        "comment": "Approved for IGCConnect",
+        "date": "2017-08-31T10:21:24Z",
+        "activity": "Approved"
+      },
+      {
+        "person": "Administrator IIS",
+        "new_state": "Pending Approval",
+        "workflow_task": "NEW",
+        "user_id": "isadmin",
+        "comment": "Approved for IGCConnect",
+        "date": "2017-08-31T10:21:17Z",
+        "activity": "SentForApproval"
+      },
+      {
+        "person": "Administrator IIS",
+        "new_state": "Draft",
+        "workflow_task": "NEW",
+        "user_id": "isadmin",
+        "comment": "!!{COMMENT_PLACEHOLDER_IMPORT_CREATE}",
+        "date": "2017-08-29T10:31:18Z",
+        "activity": "NEW"
+      }
+    ],
+    "paging": {
+      "numTotal": 4,
+      "beginIndex": 0,
+      "endIndex": 3,
+      "pageSize": 4
+    }
+  },
+  "category_path": {
+    "items": [
+      {
+        "_type": "category",
+        "_id": "6662c0f2.ee6a64fe.7pi57grci.81rkqa1.2qtft0.5i470h5i684p3bq1ervkg",
+        "_url": "https://10.11.13.155:9445/ibm/iis/igc-rest/v1/assets/6662c0f2.ee6a64fe.7pi57grci.81rkqa1.2qtft0.5i470h5i684p3bq1ervkg",
+        "_name": "Physical Address"
+      }
+    ],
+    "paging": {
+      "numTotal": 1,
+      "pageSize": 10,
+      "end": 0,
+      "begin": 0
+    }
+  },
+  "usage": "Used in addresses for mailings and demographic information",
+  "example": "100 Main Street, Centercity, KY, USA"
+}

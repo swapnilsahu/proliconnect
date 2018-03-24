@@ -1,0 +1,417 @@
+<!doctype html>
+<html ng-app="app" ng-cloak>
+
+<head>
+  <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular-touch.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular-animate.js"></script>
+  <script src="http://ui-grid.info/docs/grunt-scripts/csv.js"></script>
+  <script src="http://ui-grid.info/docs/grunt-scripts/pdfmake.js"></script>
+  <script src="http://ui-grid.info/docs/grunt-scripts/vfs_fonts.js"></script>
+  <script src="http://ui-grid.info/release/ui-grid.js"></script>
+  <link rel="stylesheet" href="http://ui-grid.info/release/ui-grid.css" type="text/css">
+  <style>
+    .grid {
+      width: 100%;
+    }
+    
+    .header img {
+      width: 300px;
+      height: 100px;
+    }
+    
+    .tablecolor {
+      background: #d6cbd3;
+    }
+    
+    .tableData {
+      column-count: 4;
+      -moz-column-count: 4;
+      -webkit-column-count: 4;
+      text-align: center;
+    }
+    
+    table {
+      width: 100%;
+      text-align: left;
+      table-layout: auto;
+      overflow: auto;
+    }
+    
+    th,
+    td {
+      padding: 8px;
+      text-align: left;
+      font-size: 14px;
+      font-weight: bold;
+      background: #d6cbd3;
+    }
+    
+    .Search {
+      text-align: center;
+      padding: 8px;
+    }
+    
+    #text {
+      font-size: 14px;
+      font-weight: bold;
+    }
+    
+    .watermark {
+      position: absolute;
+      top: 80px;
+      opacity: 0.25;
+      font-size: 3em;
+      width: 100%;
+      text-align: center;
+      z-index: 1000;
+    }
+  </style>
+</head>
+
+<body>
+  <div ng-controller="MainCtrl">
+    <div class="header">
+      <img src="http://10.11.13.153:8081/igcimage" alt="logo" />
+    </div>
+    <div ng-hide="categorydata">
+      <div class="Search"><span id="text">Search:</span>
+        <input type="text" ng-model="searchText">
+      </div>
+      <br>
+      <div class="tablecolor">
+        <div class="tableData">
+          <table>
+            <tbody>
+              <tr ng-repeat="item in responseData  | filter: searchText">
+                <td>{{$index + 1}}</td>
+                <td>
+                  <a href ng-click="displayData(item._url)">{{ item._name }}</a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="exception" ng-if="!responseData">No Response From Server. Please Contact Support !!
+          </div>
+        </div>
+      </div>
+      <br>
+      <div>
+        <span id="text">Page Size :</span>
+        <select class="size" type="text" ng-model="size" ng-change="pagesize(size)">
+          <option>5</option>
+          <option>10</option>
+          <option>25</option>
+          <option>50</option>
+          <option value="800">All</option>
+        </select>
+      </div>
+    </div>
+    <div ui-grid="gridOptions" ui-grid-selection ui-grid-grouping class="grid" ng-if="showgrid" ng-cloak>
+      <div class="watermark" ng-if="!gridOptions.data.length">No data available
+      </div>
+    </div>
+    <br>
+    <div id="container" ng-hide="dropdown">
+      <form id="myForm" name="myForm">
+        <select id="destination" name="destination" class="select1" ng-model="selectedItem">
+          <option value="00000000-0000-0000-0000-000000031101">Business Asset</option>
+          <option value="00000000-0000-0000-0000-000000031105">Business Dimension</option>
+          <option value="00000000-0000-0000-0000-000000031109">Data Category</option>
+          <option value="00000000-0000-0000-0000-000000031110">Line of Business</option>
+          <option value="00000000-0000-0000-0000-000000031103">Business Process</option>
+          <option value="00000000-0000-0000-0000-000000031104">Measure</option>
+          <option value="00000000-0000-0000-0000-000000011002">KPI</option>
+          <option value="00000000-0000-0000-0000-000000031102">Report</option>
+          <option value="ab2ac5f8-ed83-4f5b-9864-ad6ea1346dd2">Schedule</option>
+          <option value="079c2239-7c1e-4e57-8a60-a80662c90adf">GDPR Business Asset</option>
+          <option value="1ed4fbb9-2f7d-4e8b-8ba1-3b203a50972f">External Processor</option>
+          <option value="8b7e1cad-c8b2-42b0-9699-ec00c1c41b99">Legal Entity</option>
+          <option value="70d34042-c325-4690-968d-28be508b042e">Personal Data Category</option>
+          <option value="e3142eae-2a31-48b2-9785-a1500e1bbd2f">Business Unit</option>
+          <option value="b0d6a9b8-030f-4a09-aa35-e4a9c17b72ae">Data Subject Category</option>
+          <option value="fe699652-ffaa-45b2-b578-f67a81182c9a">Subcategory</option>
+          <option value="00000000-0000-0000-0000-000000011001">Business Term</option>
+          <option value="00000000-0000-0000-0000-000000011003">Acronym</option>
+          <option value="df014280-aae4-4ca6-9d2e-db1728fb2084">Attribute</option>
+          <option value="daa9c843-84f2-4933-9753-abfa3e57d0ea">Vendor Data Asset</option>
+          <option value="ee6ad135-e5f3-4fe0-b84d-f6995219e870">Bloomberg Data Field</option>
+          <option value="24c51194-06b6-4261-bfac-eafd0cb30a21">Vendor Data Category</option>
+          <option value="eaa51597-7473-4c3a-baad-a2d3f1ba8662">Vendor Data License</option>
+          <option value="f66c233e-ecfa-404b-8ba4-af88102514b6">Vendor Data Provider</option>
+          <option value="1036b3bf-ed88-442a-92fa-88c202a18112">Data Activity</option>
+          <option value="00000000-0000-0000-0000-000000031002">Data Asset</option>
+          <option value="00000000-0000-0000-0000-000000031030">Mapping Specification</option>
+          <option value="00000000-0000-0000-0000-000000021002">Code Set</option>
+          <option value="00000000-0000-0000-0000-000000021001">Code Value</option>
+          <option value="00000000-0000-0000-0000-000000031031">Crosswalk</option>
+          <option value="00000000-0000-0000-0001-000400000001">Data Set</option>
+          <option value="00000000-0000-0000-0000-000000031026">Data Element</option>
+          <option value="00000000-0000-0000-0000-000000031027">Report Attribute</option>
+          <option value="00000000-0000-0000-0001-000400000008">Field</option>
+          <option value="00000000-0000-0000-0000-000000031005">Data Attribute</option>
+          <option value="00000000-0000-0000-0000-000000031008">Column</option>
+          <option value="00000000-0000-0000-0000-000000031131">Data Usage</option>
+          <option value="e8fc8372-5c0f-4edd-ac26-f0d878e0fe1e">API</option>
+          <option value="6f7538b9-c2d7-4cf7-8e40-2990d9c6a6b9">Parameter</option>
+          <option value="00000000-0000-0000-0000-000000031025">Data Structure</option>
+          <option value="00000000-0000-0000-0000-000000031004">Data Entity</option>
+          <option value="00000000-0000-0000-0000-000000031007">Table</option>
+          <option value="00000000-0000-0000-0001-000400000002">Schema</option>
+          <option value="00000000-0000-0000-0000-000000031003">Data Model</option>
+          <option value="00000000-0000-0000-0000-000000031201">Governance Asset</option>
+          <option value="00000000-0000-0000-0000-000000031108">Data Quality Dimension</option>
+          <option value="00000000-0000-0000-0000-000000031203">Rule</option>
+          <option value="00000000-0000-0000-0000-000000031205">Data Quality Rule</option>
+          <option value="00000000-0000-0000-0000-000000005119">Validation Rule</option>
+          <option value="00000000-0000-0000-0000-000000031204">Business Rule</option>
+          <option value="00000000-0000-0000-0000-000000031107">Data Quality Metric</option>
+          <option value="4779adc9-cd38-4f73-92e1-f54249350b1d">Data Valuation Metric</option>
+          <option value="1bbfe93c-0204-4c65-b65b-833ef4eee4f5">Compliance Metric</option>
+          <option value="00000000-0000-0000-0000-000000031112">Issue Category</option>
+          <option value="9108806a-1e98-4e9f-a8e0-34f55c456f02">MRA</option>
+          <option value="51d30522-49a4-4758-809e-d17651a4cc4a">GDPR Governance Asset</option>
+          <option value="409e9c7c-3615-4850-8d78-3b66d78d55c5">Data Process</option>
+          <option value="657fb8d1-9bd9-47a8-8d7b-ba555860ca85">Retention</option>
+          <option value="e82d78b4-e525-45e0-860f-7307cc84b967">Conditions for Pocessing</option>
+          <option value="2b94eeac-c7dc-4250-98d4-5146b7ce13a6">Data Privacy Notice</option>
+          <option value="3c0cbdb7-7048-4e18-86cb-036bb5894581">Data Event</option>
+          <option value="140887f1-af1c-4546-831e-ea4005f85dc1">Remediation Plan</option>
+          <option value="5748e1fd-19f5-4922-8647-6df9a9381817">Attestation</option>
+          <option value="00000000-0000-0000-0000-000000031202">Policy</option>
+          <option value="00000000-0000-0000-0000-000000031206">Standard</option>
+          <option value="7a98efe3-a076-4422-8055-293ba3208f6f">Paragraph</option>
+          <option value="c146497c-876e-4714-aea0-0290d80c0258">Requirement</option>
+          <option value="f43580c6-35ac-444e-a3f7-70ca41e784cb">Principle</option>
+          <option value="fb7b6460-db10-43b2-8bf5-d74ad0855314">Rule Family</option>
+          <option value="00000000-0000-0000-0000-000000031231">Data Sharing Agreement</option>
+          <option value="00000000-0000-0000-0000-000000031111">Issue</option>
+          <option value="00000000-0000-0000-0000-000000031001">Data Issue</option>
+          <option value="00000000-0000-0000-0000-000000031301">Technology Asset</option>
+          <option value="00000000-0000-0000-0000-000000031303">Directory</option>
+          <option value="00000000-0000-0000-0000-000000031304">File</option>
+          <option value="00000000-0000-0000-0000-000000031006">Database</option>
+          <option value="ee769beb-3ffe-4091-aac5-3217d0dd3447">Data Entry Point</option>
+          <option value="00000000-0000-0000-0000-000000031302">System</option>
+        </select>
+        <input type="button" id="idOfButton" name="submit" value="Submit" ng-disabled="isDisabled" ng-click="postdata(selectedItem)()">
+      </form>
+    </div>
+    <div>
+      <button ng-click="goback()" ng-hide="showbutton">Back</button>
+    </div>
+
+  </div>
+  <script>
+    var app = angular.module('app', ['ngTouch', 'ui.grid', 'ui.grid.selection', 'ui.grid.grouping']);
+    app.controller('MainCtrl', ['$scope', '$http', '$log', '$timeout', function($scope, $http, $log, $timeout, uiGridConstants, uiGridGroupingConstants) {
+      $scope.gridOptions = {
+        enableRowSelection: true,
+        enableSelectAll: true,
+        selectionRowHeaderWidth: 35,
+        enableGroupHeaderSelection: false,
+        rowHeight: 35,
+        showGridFooter: true,
+      };
+      $scope.gridOptions.columnDefs = [{
+        name: '_name',
+        displayName: 'Name'
+      }, {
+        name: '_type',
+        displayName: 'Type',
+        cellTemplate: '<div ng-if="_type == term">Term</div>'
+
+      }, {
+        name: '_url',
+        displayName: 'Link',
+        allowCellFocus: false,
+        cellTemplate: '<div>' +
+          '<a href="{{row.entity._url}}" target="_blank">Link</a>' +
+          '</div>'
+      }];
+
+      $scope.gridOptions.multiSelect = true;
+      $scope.dropdown = true;
+      $scope.griddata = true;
+      $scope.categorydata = false;
+      $scope.showbutton = true;
+
+      $scope.isDisabled = false;
+      var url = "http://10.11.13.153:8081/search?types=category&pageSize=100";
+      var igcdata;
+      $http({
+          method: 'GET',
+          url: url,
+
+        })
+        .success(function(data) {
+          igcdata = $scope.modifyresponse(data.items);
+          $scope.responseData = igcdata;
+        })
+        .error(function(error, status) {
+          console.log(error, status);
+        });
+
+
+      $scope.pagesize = function(size) {
+        $scope.searchText = "";
+        var url = "http://10.11.13.153:8081/search?types=category&pageSize=" + size;
+        var igcdata;
+        $http({
+            method: 'GET',
+            url: url,
+          })
+          .success(function(data) {
+            igcdata = $scope.modifyresponse(data.items);
+            $scope.responseData = igcdata;
+          })
+          .error(function(error, status) {
+            console.log(error, status);
+          });
+      }
+      $scope.displayData = function(url) {
+        $scope.showgrid = true;
+        $scope.dropdown = true;
+        $scope.categorydata = true;
+        $scope.griddata = false;
+        $scope.showbutton = false;
+
+        $http({
+            method: 'GET',
+            url: url,
+          })
+          .success(function(data) {
+            igcdata = $scope.modifyurl(data.terms.items);
+            $scope.gridOptions.data = igcdata;
+            console.log(igcdata);
+          })
+          .error(function(error, status) {
+            console.log(error, status);
+          });
+      }
+      $scope.modifyresponse = function(items) {
+
+        for (i = 0; i < items.length; i++) {
+          items[i]._url = 'http://10.11.13.153:8081/Masset?catid=' + items[i]._id
+        }
+        return items;
+      }
+      $scope.modifyurl = function(items) {
+
+        for (i = 0; i < items.length; i++) {
+          items[i]._url = 'https://10.11.13.155:9445/ibm/iis/igc/#dossierView/' + items[i]._id
+        }
+        console.log("modify", items);
+        return items
+      }
+
+      $scope.goback = function() {
+        window.location.reload(true);
+        $scope.showgrid = false;
+        $scope.categorydata = false;
+        $scope.griddata = true;
+        $scope.showbutton = true;
+        $scope.dropdown = true;
+
+      }
+
+      $scope.info = {};
+      var selectedasset;
+      $scope.gridOptions.onRegisterApi = function(gridApi) {
+        console.log(selectedasset, gridApi.grid.selection.selectedCount);
+        gridApi.selection.on.rowSelectionChanged($scope, function(row) {
+          selectedasset = gridApi.selection.getSelectedRows();
+
+
+          console.log(" 1 selected assest", selectedasset, gridApi.grid.selection.selectedCount);
+          if (gridApi.grid.selection.selectedCount === 0) {
+            $scope.dropdown = true;
+          } else {
+            $scope.dropdown = false;
+          }
+        });
+
+        console.log("info", $scope.info);
+        gridApi.selection.on.rowSelectionChangedBatch($scope, function(rows) {
+
+          console.log("selected assest", selectedasset)
+          selectedasset = gridApi.selection.getSelectedRows();
+          console.log(" 2 selected assest", selectedasset, gridApi.grid.selection.selectedCount);
+          if (gridApi.grid.selection.selectedCount === 0) {
+            $scope.dropdown = true;
+          } else {
+            $scope.dropdown = false;
+          }
+        });
+
+
+      };
+
+
+
+      $scope.postdata = function(items1) {
+
+        $scope.isDisabled = true;
+        $timeout(1000);
+        console.log("showgrid value", $scope.showgrid);
+        var assetid = items1;
+        var posturl = "http://10.11.13.153:8081/front?assettype=" + assetid;
+        console.log(posturl);
+        $scope.entries = selectedasset;
+        console.log("selectedasset in entries", selectedasset);
+        var e = document.getElementById("destination");
+        $scope.strUser = e.options[e.selectedIndex].text;
+
+        var postdata = {};
+        postdata.terms = {}
+        var names = [];
+        postdata.terms.items = [];
+        for (i = 0; i < selectedasset.length; i++) {
+          console.log(selectedasset[i]._name);
+          postdata.terms.items[i] = {};
+          postdata.terms.items[i]._type = selectedasset[i]._type;
+          postdata.terms.items[i]._id = selectedasset[i]._id;
+          postdata.terms.items[i]._url = selectedasset[i]._url;
+          postdata.terms.items[i]._name = selectedasset[i]._name;
+          names[i] = selectedasset[i]._name;
+        }
+        console.log("postdata", JSON.stringify(postdata));
+        console.log("names", names);
+        console.log("selectedasset json stringify", JSON.stringify(selectedasset));
+
+        $.ajax({
+
+          url: posturl,
+          type: 'post',
+          dataType: 'json',
+          headers: ({
+            "Content-Type": "application/json"
+          }),
+          success: function(data) {
+
+            alert("The following have been migrated to Collibra DGC as Element : " + $scope.strUser +"-"+  "\n " + names.map(function(x,i){var number = [i+1]; var name= x; return (number+ ") "+name+("\n"));}).join(" "));
+
+            $scope.showgrid = true;
+            $scope.isDisabled = false;
+            console.log("Response", data);
+
+          },
+          error: function(data, err) {
+            alert("Sorry Due To Technical Issue the Records were unable to move. Please Contact Support !! ");
+            $scope.showgrid = true;
+            $scope.isDisabled = false;
+            console.log("completed !! ");
+            console.log("err", err);
+
+          },
+
+          data: JSON.stringify(postdata)
+        });
+        console.log("finaldata", items1);
+      };
+    }]);
+  </script>
+</body>
+
+</html>

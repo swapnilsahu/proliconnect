@@ -1,0 +1,67 @@
+{
+  "created_by": "Administrator IIS",
+  "position": 3,
+  "modified_on": "2017-05-25T09:32:40Z",
+  "unique": false,
+  "assigned_to_terms": {
+    "items": [
+      {
+        "_type": "term",
+        "_id": "6662c0f2.e1b1ec6c.1mdlmv3b0.5k8s0tp.4benof.8g09qphoil3vgf1ndl0js",
+        "_url": "https://10.11.13.155:9445/ibm/iis/igc-rest/v1/assets/6662c0f2.e1b1ec6c.1mdlmv3b0.5k8s0tp.4benof.8g09qphoil3vgf1ndl0js",
+        "_name": "Export_01"
+      }
+    ],
+    "paging": {
+      "numTotal": 1,
+      "pageSize": 10,
+      "end": 0,
+      "begin": 0
+    }
+  },
+  "_context": [
+    {
+      "_type": "host",
+      "_id": "b1c497ce.354f5217.7pi57kia5.59qkorg.aks02i.aq9o53avt27elqahthsb5",
+      "_url": "https://10.11.13.155:9445/ibm/iis/igc-rest/v1/assets/b1c497ce.354f5217.7pi57kia5.59qkorg.aks02i.aq9o53avt27elqahthsb5",
+      "_name": "MDM-SERVER.IBM.COM"
+    },
+    {
+      "_type": "database",
+      "_id": "b1c497ce.6e83759b.7pi57kia5.41u4ss9.n2p5c7.2as0l8r9g5vvl5uie3hg9",
+      "_url": "https://10.11.13.155:9445/ibm/iis/igc-rest/v1/assets/b1c497ce.6e83759b.7pi57kia5.41u4ss9.n2p5c7.2as0l8r9g5vvl5uie3hg9",
+      "_name": "MDM11DB"
+    },
+    {
+      "_type": "database_schema",
+      "_id": "b1c497ce.c1fb060b.7pi57kia5.3uo2edt.vcckvh.um8vjbu7g6nnd4nf8t9im",
+      "_url": "https://10.11.13.155:9445/ibm/iis/igc-rest/v1/assets/b1c497ce.c1fb060b.7pi57kia5.3uo2edt.vcckvh.um8vjbu7g6nnd4nf8t9im",
+      "_name": "DB2ADMIN"
+    },
+    {
+      "_type": "database_table",
+      "_id": "b1c497ce.54bd3a08.7pi57kia5.4v6d6m3.a0akc6.2fti65a6visl3fublht07",
+      "_url": "https://10.11.13.155:9445/ibm/iis/igc-rest/v1/assets/b1c497ce.54bd3a08.7pi57kia5.4v6d6m3.a0akc6.2fti65a6visl3fublht07",
+      "_name": "CACHINGSERVICE"
+    }
+  ],
+  "created_on": "2016-04-01T09:47:15Z",
+  "allows_null_values": false,
+  "_name": "C_OBJECT",
+  "type": "BLOB",
+  "_type": "database_column",
+  "_id": "b1c497ce.60641b50.7pi57kia5.41tno7b.cf5k0b.veth8prjpklvkvs4jap34",
+  "modified_by": "Administrator IIS",
+  "_url": "https://10.11.13.155:9445/ibm/iis/igc-rest/v1/assets/b1c497ce.60641b50.7pi57kia5.41tno7b.cf5k0b.veth8prjpklvkvs4jap34",
+  "data_type": "BINARY",
+  "name": "C_OBJECT",
+  "minimum_length": 0,
+  "length": "0",
+  "odbc_type": "LONGVARBINARY",
+  "database_table_or_view": {
+    "_type": "database_table",
+    "_id": "b1c497ce.54bd3a08.7pi57kia5.4v6d6m3.a0akc6.2fti65a6visl3fublht07",
+    "_url": "https://10.11.13.155:9445/ibm/iis/igc-rest/v1/assets/b1c497ce.54bd3a08.7pi57kia5.4v6d6m3.a0akc6.2fti65a6visl3fublht07",
+    "_name": "CACHINGSERVICE"
+  }
+}

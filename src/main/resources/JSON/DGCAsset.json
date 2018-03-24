@@ -1,0 +1,21 @@
+{
+  "id": "26513b3b-22cd-4ba2-b466-19b9f6eea6b5",
+  "createdBy": "f0ebeb96-6cf0-4144-abba-115ff57b667a",
+  "creationDate": 1492608795280,
+  "lastModifiedBy": "f0ebeb96-6cf0-4144-abba-115ff57b667a",
+  "lastModificationDate": 1492608795352,
+  "name": "Mule Expression",
+  "url": "http://10.11.13.160:4400/term/26513b3b-22cd-4ba2-b466-19b9f6eea6b5",
+  "type": {
+    "id": "00000000-0000-0000-0000-000000031026",
+    "name": "Data Element"
+  },
+  "status": {
+    "id": "00000000-0000-0000-0000-000000005008",
+    "name": "Candidate"
+  },
+  "domain": {
+    "id": "dbcc1f82-6eea-4d44-8a53-535f58565484",
+    "name": "Mule Domain"
+  }
+}

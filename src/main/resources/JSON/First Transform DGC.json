@@ -1,0 +1,36 @@
+{
+  "id": "b6d5b95f-3e0d-4d66-942e-2e5cc359d1b6",
+  "createdBy": "f0ebeb96-6cf0-4144-abba-115ff57b667a",
+  "creationDate": 1504796959530,
+  "lastModifiedBy": "f0ebeb96-6cf0-4144-abba-115ff57b667a",
+  "lastModificationDate": 1504797492171,
+  "name": "After Hours Contact",
+  "url": "http://10.11.13.160:4400/term/b6d5b95f-3e0d-4d66-942e-2e5cc359d1b6",
+  "description": [
+    "<span class=\"text\"><span class=\"truncatedTextContainer\"><span class=\"truncatedText\">The after-operating hour contact person in case of emergency at the Practice.</span></span></span>"
+  ],
+  "attributetype": [
+    "None"
+  ],
+  "phi": [
+    "No"
+  ],
+  "attributestatus": [
+    "Accepted"
+  ],
+  "example": [
+    "<span class=\"text\"><span class=\"truncatedTextContainer\"><span class=\"truncatedText\">First Name Last Name 704-XXX-XXXX</span></span></span>"
+  ],
+  "type": {
+    "id": "00000000-0000-0000-0000-000000031004",
+    "name": "Data Entity"
+  },
+  "status": {
+    "id": "00000000-0000-0000-0000-000000005008",
+    "name": "Candidate"
+  },
+  "domain": {
+    "id": "dbcc1f82-6eea-4d44-8a53-535f58565484",
+    "name": "Facilities"
+  }
+}

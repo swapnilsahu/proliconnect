@@ -1,0 +1,527 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata" xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking" xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:spring="http://www.springframework.org/schema/beans" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:collibra-dgc="http://www.mulesoft.org/schema/mule/collibra-dgc" xmlns:tls="http://www.mulesoft.org/schema/mule/tls" xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:core="http://www.mulesoft.org/schema/mule/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/collibra-dgc http://www.mulesoft.org/schema/mule/collibra-dgc/current/mule-collibra-dgc.xsd
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd">
+    <http:listener-config name="HTTP_Listener_Configuration" host="${http.host}" port="${http.port}" doc:name="HTTP Listener Configuration"/>
+    <http:request-config name="HTTP_Request_Configuration_IGC" protocol="HTTPS" host="${https.igc.host}" port="${https.igc.port}" basePath="${https.igc.path}" doc:name="HTTP Request Configuration" enableCookies="true">
+        <http:basic-authentication username="${http.igc.auth.user}" password="${http.igc.auth.password}" preemptive="true"/>
+        <tls:context>
+            <tls:trust-store path="iis-client-truststore.p12" password="${http.keystore.password}" type="pkcs12" insecure="true"/>
+            <tls:key-store type="pkcs12" path="iis-client-truststore.p12" keyPassword="${http.keystore.password}" password="${http.keystore.password}"/>
+        </tls:context>
+    </http:request-config>
+    <collibra-dgc:config name="CollibraDGC__Connection_Managament_type_strategy" username="${dgc.user}" password="${dgc.password}" baseApplicationUrl="http://${dgc.config.host}:${dgc.config.port}" doc:name="CollibraDGC: Connection Managament type strategy"/>
+    <object-to-string-transformer returnClass="com.collibra.connect.dgc.connector.model.Asset" mimeType="application/json" name="Object_to_String" doc:name="Object to String"/>
+    <http:request-config name="HTTP_Request_Configuration_Email" protocol="HTTPS" host="${https.igc.email.host}" port="${https.igc.email.port}" basePath="${https.igc.email.path}" doc:name="HTTP Request Configuration">
+        <http:basic-authentication username="${http.igc.auth.user}" password="${http.igc.auth.password}" preemptive="true"/>
+    </http:request-config>
+    <db:generic-config name="Generic_Database_Configuration" url="jdbc:db2://10.11.13.155:50000/IGC2DGC:user=db2inst1;password=inf0server;" driverClassName="com.ibm.db2.jcc.DB2Driver" doc:name="Generic Database Configuration"/>
+    <spring:beans>
+        <spring:bean id="objectStore" class="org.mule.util.store.SimpleMemoryObjectStore"/>
+    </spring:beans>
+     <flow name="BpmToCollibraFlow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="igc" allowedMethods="POST" doc:name="HTTP: igc"/>
+        <flow-ref name="DGC_DomainID_and_TypeID" doc:name="DGC_DomainID_and_TypeID"/>
+        <dw:transform-message doc:name="Transform Message">
+            <dw:set-payload><![CDATA[// %dw 1.0
+//%output application/java
+//---
+//[{
+//	externalSystemId: payload."_id",
+//	name: payload."_name",
+//	domain: {
+//		id: flowVars.DomainID as :string
+//	},
+//	"00000000-0000-0000-0000-000000003114": [{
+//		value: payload.short_description // Description
+//	}],
+//	"00000000-0000-0000-0000-000000000219": [{
+//		value: payload."_type" // Data Type
+//	}],
+//	"00000000-0000-0000-0000-000000000220": [{
+//		value: payload."custom_Security Level" // Data Type Precision
+//	}],
+//	"00000000-0000-0000-0000-000000000203": [{ // Location
+//		value: payload."_id"
+//	}],
+//	"a9851c10-b03e-4723-ba84-9b471b79302a": [{	
+//		value: "TEST DATA "
+//		}]
+//}]
+
+%dw 1.0
+%output application/java 
+%function name(n) payload.assigned_assets.items.*"_name"
+---
+[{
+	externalSystemId: payload."_id",
+	name: payload."_name",
+	domain: {
+		id: flowVars.DomainID as :string
+	},
+	"00000000-0000-0000-0000-000000003114": [{
+		value: payload.short_description // Description
+	}],
+	"00000000-0000-0000-0000-000000000219": [{
+		value: payload."_type" // Data Type
+	}],
+	"00000000-0000-0000-0000-000000000218": [{
+		value: payload.abbreviation // Abbreviation
+	}],
+		"b5adbcde-f126-4fc7-84e0-8a65117ea037": [{
+		value: payload.example // Example
+	}],
+	"8f7d2172-02a2-4233-841c-817decb12408": [{
+		value: payload.usage // Usage
+	}],
+		"42915b56-6e46-40f5-8037-34a0a64bc1c8": [{
+		value: payload.type // Type
+	}],
+	"550f5b71-f4a0-4dc2-8169-2d57d5e00feb": [{
+		value: payload.long_description // Long Description
+	}],
+	"ad10ff59-d6c6-4f4a-9a46-7746cd265eb1": [{
+		value: payload.long_description // Parent Category
+	}],
+	"95ca5f3f-1cc1-49af-915b-89dca7f67ce3": [{
+		value: payload.long_description // Status
+	}],
+	"35635bdc-e153-4583-b6bf-33a0e45ed093": [{ // Assigned Assets
+		value: "Assigned Asset Not Available" when payload.assigned_assets.items == null otherwise payload.assigned_assets.items map ((url, indexofUrl) -> 
+			flowVars.igcurl ++ url."_id" ++ "\">" ++  url."_name"  ++ "\</a>" ) joinBy " <b>||</b> "	
+	}],
+	
+	"a9851c10-b03e-4723-ba84-9b471b79302a": [{	
+		value:  "Assigned Asset Not Available"  //payload.assigned_assets.items.*"_name" joinBy " / "
+		}]  
+}]
+
+]]></dw:set-payload>
+        </dw:transform-message>
+
+        <collibra-dgc:upsert-assets-by-name config-ref="CollibraDGC__Connection_Managament_type_strategy" assetTypeId="#[message.inboundProperties.'http.query.params'.assettype]" doc:name="CollibraDGC">
+            <collibra-dgc:assets ref="#[payload]"/>
+        </collibra-dgc:upsert-assets-by-name>
+        <logger message="#[payload]" level="INFO" doc:name="Logger"/>
+        <set-variable variableName="APayload" value="#[payload]" doc:name="Variable"/>
+        <dw:transform-message doc:name="Transform Message">
+            <dw:input-payload doc:sample="sample_data\list_map_2.dwl"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+{
+IGCRID: payload.externalSystemId reduce ($$ ++ $),
+DGCAID: payload.id reduce ($$ ++ $),
+Name: payload.name reduce ($$ ++ $)
+} ]]></dw:set-payload>
+        </dw:transform-message>
+        <db:update config-ref="Generic_Database_Configuration" doc:name="Database">
+            <db:parameterized-query><![CDATA[MERGE INTO AssetTermMap AS tab 
+USING (VALUES
+        (#[payload.IGCRID],'Asset from BPM to DGC',#[payload.Name],#[payload.DGCAID],CURRENT TIME,CURRENT DATE)
+    ) AS merge (IGCRID,TYPE,NAME,DGCAID,TIME,DATE)
+    ON tab.DGCAID = merge.DGCAID
+    WHEN MATCHED THEN
+        UPDATE SET tab.IGCRID = merge.IGCRID,
+                   tab.TYPE = merge.TYPE,
+                   tab.NAME = merge.NAME,
+				   tab.DGCAID = merge.DGCAID,
+				   tab.TIME = merge.TIME,
+				   tab.DATE = merge.DATE
+    WHEN NOT MATCHED THEN
+        INSERT (IGCRID, TYPE, NAME, DGCAID,TIME,DATE)
+        VALUES (merge.IGCRID, merge.TYPE, merge.NAME, merge.DGCAID,merge.TIME,merge.DATE)]]></db:parameterized-query>
+        </db:update>
+        <set-payload value="#[flowVars.APayload]" doc:name="Set Payload"/>
+        <byte-array-to-string-transformer doc:name="Byte Array to String"/>
+
+        <logger message="BPM Flow--------------------#[payload]--------------------------" level="INFO" doc:name="Logger"/>
+        <exception-strategy ref="globalCatch_Exception_StrategyDefault" doc:name="Reference Exception Strategy"/>
+    </flow>
+    <flow name="CategoryFlow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="cat/" allowedMethods="GET" doc:name="HTTP category"/>
+        <collibra-dgc:login config-ref="CollibraDGC__Connection_Managament_type_strategy" doc:name="CollibraDGC"/>
+        <set-variable variableName="AssetTypeID" value="#[message.inboundProperties.'http.query.params'.assettype]" doc:name="Variable"/>
+        <http:request config-ref="HTTP_Request_Configuration_IGC" path="assets/{catid}" method="GET" doc:name="HTTPS: Multiple Terms">
+            <http:request-builder>
+                <http:uri-param paramName="catid" value="#[message.inboundProperties.'http.query.params'.catid]"/>
+            </http:request-builder>
+        </http:request>
+        <logger message="#[payload]" level="INFO" doc:name="Logger"/>
+        <json:json-to-object-transformer returnClass="java.lang.Object" doc:name="JSON to Object"/>
+        <foreach collection="#[payload.terms.items]" doc:name="For Each">
+            <set-variable variableName="tid" value="#[payload._id]" doc:name="Variable: Termid"/>
+            <http:request config-ref="HTTP_Request_Configuration_IGC" path="assets/{rid}" method="GET" doc:name="HTTPS: IGC Rest API">
+                <http:request-builder>
+                    <http:uri-param paramName="rid" value="#[flowVars.tid]"/>
+                </http:request-builder>
+            </http:request>
+
+            <flow-ref name="DGC_DomainID_and_TypeID" doc:name="DGC_DomainID_and_TypeID"/>
+            <dw:transform-message doc:name="Transform Message">
+                <dw:input-payload mimeType="application/json" doc:sample="C:\Users\ssahu\Desktop\JSON\igcterm.json"/>
+                <dw:set-payload><![CDATA[%dw 1.0
+%output application/java skipNullOn="everywhere"
+%function name(n) payload.assigned_assets.items.*"_name"
+---
+[{
+	externalSystemId: payload."_id",
+	name: payload."_name",
+	domain: {
+		id: flowVars.DomainID as :string
+	},
+	"00000000-0000-0000-0000-000000003114": [{
+		value: payload.short_description // Description
+	}],
+	"00000000-0000-0000-0000-000000000219": [{
+		value: payload."_type" // Data Type
+	}],
+	"00000000-0000-0000-0000-000000000220": [{
+		value: payload."custom_Security Level" // Data Type Precision
+	}],
+	"00000000-0000-0000-0000-000000000203": [{ // Location
+		value:  payload.assigned_assets.items map ((url, indexofUrl) -> 
+			flowVars.igcurl ++ url."_id" ++ "\">" ++  url."_name"  ++ "\</a>" ) joinBy " <b>||</b> "	
+	}],
+	
+	"a9851c10-b03e-4723-ba84-9b471b79302a": [{	
+		value: payload.assigned_assets.items.*"_name" joinBy " / "
+		}]  
+}]]]></dw:set-payload>
+            </dw:transform-message>
+            <collibra-dgc:upsert-assets-by-name config-ref="CollibraDGC__Connection_Managament_type_strategy" assetTypeId="00000000-0000-0000-0000-000000031026" doc:name="CollibraDGC">
+                <collibra-dgc:assets ref="#[payload]"/>
+            </collibra-dgc:upsert-assets-by-name>
+            <dw:transform-message doc:name="Transform Message">
+                <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+{
+IGCRID: payload.externalSystemId,
+DGCAID: payload.id,
+Name: payload.name
+}]]></dw:set-payload>
+            </dw:transform-message>
+
+            <logger message="--------------------#[payload.DGCAID]---and #[payload.IGCRID]--------------" level="INFO" doc:name="Logger"/>
+
+        </foreach>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+
+        <logger message="Terms has been Migrated to Collibra DGC   ------------  #[payload]" level="INFO" doc:name="Logger"/>
+        <exception-strategy ref="globalCatch_Exception_StrategyDefault" doc:name="Reference Exception Strategy"/>
+
+    </flow>
+    <flow name="DGCFlow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/dgc" allowedMethods="GET" doc:name="HTTP dgc"/>
+        <set-variable variableName="ManualAssetID" value="1afbf665-23d0-4d87-9efb-d7ae4ec85f83" doc:name="Variable: ManualAssetID"/>
+        <set-variable variableName="ManualCommentID" value="239d820e-a440-4a06-98db-1fb9f6ef9607" doc:name="Variable: ManualCommentID"/>
+        <set-variable variableName="ManualListAssets" value="00000000-0000-0000-0000-000000006013" doc:name="Variable: ManualListAssets"/>
+        <collibra-dgc:get-asset config-ref="CollibraDGC__Connection_Managament_type_strategy" assetId="1afbf665-23d0-4d87-9efb-d7ae4ec85f83" doc:name="CollibraDGC: Get asset"/>
+
+        <dw:transform-message doc:name="Transform Message">
+            <dw:input-payload doc:sample="sample_data\Asset.dwl"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/xml
+---
+payload
+]]></dw:set-payload>
+        </dw:transform-message>
+        <logger message="#[payload]" level="INFO" doc:name="Logger"/>
+        <exception-strategy ref="globalCatch_Exception_StrategyDefault" doc:name="Reference Exception Strategy"/>
+    </flow>
+    <flow name="IGCFrontSearch">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/search" allowedMethods="GET" doc:name="HTTP searc"/>
+        <http:request config-ref="HTTP_Request_Configuration_IGC" path="search/?types={types}&amp;pageSize={pageSize}" method="GET" doc:name="HTTPS: IGC Rest API">
+            <http:request-builder>
+                <http:uri-param paramName="types" value="#[message.inboundProperties.'http.query.params'.types]"/>
+                <http:uri-param paramName="pageSize" value="#[message.inboundProperties.'http.query.params'.pageSize]"/>
+            </http:request-builder>
+        </http:request>
+        <message-properties-transformer mimeType="application/json" doc:name="Message Properties">
+            <add-message-property key="Access-Control-Allow-Origin" value="*"/>
+            <add-message-property key="Access-Control-Allow-Headers" value="Content-Type"/>
+            <add-message-property key="Access-Control-Allow-Methods" value="GET, POST, OPTIONS"/>
+            <add-message-property key="Content-Type" value="application/json"/>
+            <add-message-property key="Cache-Control" value="no-cache"/>
+        </message-properties-transformer>
+
+        <logger message="#[payload]" level="INFO" doc:name="Logger"/>
+        <exception-strategy ref="globalCatch_Exception_StrategyDefault" doc:name="Reference Exception Strategy"/>
+
+    </flow>
+    <flow name="DGCSynonm">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/relationship{}" allowedMethods="GET" doc:name="HTTP relationship"/>
+        <set-variable variableName="relID" value="#[message.inboundProperties.'http.query.params'.relationshipwith]" doc:name="Variable"/>
+        <http:request config-ref="HTTP_Request_Configuration_IGC" path="assets/{rid}" method="GET" doc:name="HTTPS: IGC Rest API">
+            <http:request-builder>
+                <http:uri-param paramName="rid" value="#[message.inboundProperties.'http.query.params'.rid]"/>
+            </http:request-builder>
+        </http:request>
+        <flow-ref name="DGC_DomainID_and_TypeID" doc:name="DGC_DomainID_and_TypeID"/>
+        <dw:transform-message doc:name="Transform Message" >
+            <dw:input-payload doc:sample="C:\Users\ssahu\Desktop\JSON\igcterm.json" mimeType="application/json"/>
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+[{
+	externalSystemId: payload."_id",
+	name: payload."_name",
+	domain: {
+		id: flowVars.DomainID as :string
+	},
+	"00000000-0000-0000-0000-000000007001:TARGET": [{
+		name: flowVars.relID,
+		domain: {
+			id: flowVars.DomainID as :string
+		}
+	}]
+}]]]></dw:set-payload>
+        </dw:transform-message>
+        <collibra-dgc:upsert-assets-by-name config-ref="CollibraDGC__Connection_Managament_type_strategy" assetTypeId="00000000-0000-0000-0000-000000011001" doc:name="CollibraDGC">
+            <collibra-dgc:assets ref="#[payload]"/>
+        </collibra-dgc:upsert-assets-by-name>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+
+
+        <logger level="INFO" doc:name="Logger" message="#[payload]"/>
+        <exception-strategy ref="globalChoice_Exception_Strategy" doc:name="Reference Exception Strategy"/>
+    </flow>
+
+    <flow name="setIGCAssetVariable">
+        <set-variable variableName="Mule" value="f4951817.e469fa50.1mdlmn80h.7f31v01.55qre3.548bku9kbgnbkrjn7ece5" doc:name="Variable : Mule"/>
+        <set-variable variableName="Mule_dataClass2" value="f4951817.e469fa50.1mdlmn8qg.q0lr791.uccm1j.om19e81fu7sl589quc398" doc:name="Variable: Mule_dataClass2"/>
+        <set-variable variableName="Mule_dataClass3" value="f4951817.e469fa50.1mdlmn8sj.4fv53ha.4hh8ho.i4s2280ts2c9ot31h2hf5" doc:name="Variable: Mule_dataClass3"/>
+    </flow>
+    <flow name="DGC_DomainID_and_TypeID">
+        <set-variable variableName="DomainID" value="d7b36ddb-35ae-4f83-9275-4bb6c01d5916" doc:name="Variable: DomainID"/>
+        <set-variable variableName="DomainName" value="Physical Address" doc:name="Variable: DomainName"/>
+        <set-variable variableName="TypeID" value="00000000-0000-0000-0000-000000031026" doc:name="Variable: TypeID"/>
+        <set-variable variableName="LongValue" value="22031989" doc:name="Variable: Long Value"/>
+        <set-variable variableName="CommunityID" value="986dd03a-f21d-45df-a91c-0a1591931ca9" doc:name="Variable: CommunityID"/>
+        <set-variable variableName="CommunityName" value="Mule Community" doc:name="Variable: CommunityName"/>
+        <set-variable variableName="AssetID" value="26513b3b-22cd-4ba2-b466-19b9f6eea6b5" doc:name="Variable: Asset ID for Test"/>
+        <set-variable variableName="igcurl" value="&lt;a target=&quot;_blank&quot; href=&quot;https://10.11.13.155:9445/ibm/iis/igc/#dossierView/" doc:name="Variable: IGC Path"/>
+    </flow>
+    <flow name="igc_connectFrontEnd">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="Masset" allowedMethods="GET" doc:name="HTTP"/>
+        <http:request config-ref="HTTP_Request_Configuration_IGC" path="assets/{catid}" method="GET" doc:name="HTTP">
+            <http:request-builder>
+                <http:uri-param paramName="catid" value="#[message.inboundProperties.'http.query.params'.catid]"/>
+            </http:request-builder>
+        </http:request>
+        <response>
+            <message-properties-transformer doc:name="Message Properties">
+                <add-message-property key="Access-Control-Allow-Origin" value="*"/>
+                <add-message-property key="Access-Control-Allow-Headers" value="Content-Type"/>
+                <add-message-property key="Access-Control-Allow-Methods" value="GET, POST, OPTIONS"/>
+            </message-properties-transformer>
+        </response>
+
+
+
+
+        <logger message="#[payload]" level="INFO" doc:name="Logger"/>
+        <exception-strategy ref="globalCatch_Exception_StrategyDefault" doc:name="Reference Exception Strategy"/>
+
+
+    </flow>
+    <flow name="igcFront">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/front" allowedMethods="POST" doc:name="HTTP"/>
+        <message-properties-transformer mimeType="application/json" doc:name="Message Properties">
+            <add-message-property key="Access-Control-Allow-Origin" value="*"/>
+            <add-message-property key="Access-Control-Allow-Headers" value="Content-Type"/>
+            <add-message-property key="Access-Control-Allow-Methods" value="GET, POST, OPTIONS"/>
+            <add-message-property key="Content-Type" value="application/x-www-form-urlencoded"/>
+            <add-message-property key="Cache-Control" value="no-cache"/>
+        </message-properties-transformer>
+        <set-variable variableName="AssetTypeID" value="#[message.inboundProperties.'http.query.params'.assettype]" doc:name="Variable: AssetTypeID"/>
+        <logger message="#[payload]" level="INFO" doc:name="Logger"/>
+        <json:json-to-object-transformer returnClass="java.lang.Object" doc:name="JSON to Object"/>
+ 
+        <foreach collection="#[payload.terms.items]" doc:name="For Each">
+            <set-variable variableName="tid" value="#[payload._id]" doc:name="Variable: Termid"/>
+            <http:request config-ref="HTTP_Request_Configuration_IGC" path="assets/{rid}" method="GET" doc:name="HTTPS: IGC Rest API">
+                <http:request-builder>
+                    <http:uri-param paramName="rid" value="#[flowVars.tid]"/>
+                </http:request-builder>
+            </http:request>
+
+            <flow-ref name="DGC_DomainID_and_TypeID" doc:name="DGC_DomainID_and_TypeID"/>
+            <logger message="#[payload]" level="INFO" doc:name="Logger"/>
+            <dw:transform-message doc:name="Transform Message" metadata:id="2c79be83-6287-4640-a586-8219688c65a1">
+                <dw:input-payload mimeType="application/json" doc:sample="C:\Users\ssahu\Desktop\JSON\igcterm.json"/>
+                <dw:set-payload><![CDATA[%dw 1.0
+%output application/java 
+%function name(n) payload.assigned_assets.items.*"_name"
+---
+[{
+	externalSystemId: payload."_id",
+	name: payload."_name",
+	domain: {
+		id: flowVars.DomainID as :string
+	},
+	"00000000-0000-0000-0000-000000003114": [{
+		value: payload.short_description // Description
+	}],
+	"00000000-0000-0000-0000-000000000219": [{
+		value: payload."_type" // Data Type
+	}],
+	"00000000-0000-0000-0000-000000000218": [{
+		value: payload.abbreviation // Abbreviation
+	}],
+		"b5adbcde-f126-4fc7-84e0-8a65117ea037": [{
+		value: payload.example // Example
+	}],
+	"8f7d2172-02a2-4233-841c-817decb12408": [{
+		value: payload.usage // Usage
+	}],
+		"42915b56-6e46-40f5-8037-34a0a64bc1c8": [{
+		value: payload.type // Type
+	}],
+	"550f5b71-f4a0-4dc2-8169-2d57d5e00feb": [{
+		value: payload.long_description // Long Description
+	}],
+	"ad10ff59-d6c6-4f4a-9a46-7746cd265eb1": [{
+		value: payload.parent_category."_name" // Parent Category
+	}],
+	"95ca5f3f-1cc1-49af-915b-89dca7f67ce3": [{
+		value: payload.status // Status
+	}],
+	"35635bdc-e153-4583-b6bf-33a0e45ed093": [{ // Assigned Assets
+		value: "Assigned Asset Not Available" when payload.assigned_assets.items == null otherwise payload.assigned_assets.items map ((url, indexofUrl) -> 
+			flowVars.igcurl ++ url."_id" ++ "\">" ++  url."_name"  ++ "\</a>" ) joinBy " <b>||</b> "	
+	}],
+	
+	"a9851c10-b03e-4723-ba84-9b471b79302a": [{	
+		value:  "Assigned Asset Not Available"  //payload.assigned_assets.items.*"_name" joinBy " / "
+		}]  
+}]]]></dw:set-payload>
+            </dw:transform-message>
+            <logger message="#[payload]" level="INFO" doc:name="Logger"/>
+            <collibra-dgc:upsert-assets-by-name config-ref="CollibraDGC__Connection_Managament_type_strategy" assetTypeId="#[message.inboundProperties.'http.query.params'.assettype]" doc:name="CollibraDGC">
+                <collibra-dgc:assets ref="#[payload]"/>
+            </collibra-dgc:upsert-assets-by-name>
+            <dw:transform-message doc:name="Transform Message">
+                <dw:input-payload doc:sample="sample_data\list_map_2.dwl"/>
+                <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+{
+IGCRID: payload.externalSystemId reduce ($$ ++ $),
+DGCAID: payload.id reduce ($$ ++ $),
+Name: payload.name reduce ($$ ++ $)
+} ]]></dw:set-payload>
+            </dw:transform-message>
+            <db:update config-ref="Generic_Database_Configuration" doc:name="Database">
+                <db:parameterized-query><![CDATA[MERGE INTO AssetTermMap AS tab 
+USING (VALUES
+        (#[payload.IGCRID],'Asset from IGC to DGC',#[payload.Name],#[payload.DGCAID],CURRENT TIME,CURRENT DATE)
+    ) AS merge (IGCRID,TYPE,NAME,DGCAID,TIME,DATE)
+    ON tab.DGCAID = merge.DGCAID
+    WHEN MATCHED THEN
+        UPDATE SET tab.IGCRID = merge.IGCRID,
+                   tab.TYPE = merge.TYPE,
+                   tab.NAME = merge.NAME,
+				   tab.DGCAID = merge.DGCAID,
+				   tab.TIME = merge.TIME,
+				   tab.DATE = merge.DATE
+    WHEN NOT MATCHED THEN
+        INSERT (IGCRID, TYPE, NAME, DGCAID,TIME,DATE)
+        VALUES (merge.IGCRID, merge.TYPE, merge.NAME, merge.DGCAID,merge.TIME,merge.DATE)]]></db:parameterized-query>
+            </db:update>
+
+
+        </foreach>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <logger level="INFO" doc:name="Logger"/>
+        <exception-strategy ref="globalChoice_Exception_Strategy" doc:name="Reference Exception Strategy"/>
+    
+    </flow>
+    <flow name="FrontEndMock">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/fro" allowedMethods="POST" doc:name="HTTP"/>
+        <json:validate-schema schemaLocation="JSON/JSONValidate.json" doc:name="Validate JSON Schema"/>
+        <expression-component doc:name="Mock HTTPS Response"><![CDATA[payload]]></expression-component>
+        <message-properties-transformer mimeType="application/json" doc:name="Message Properties">
+            <add-message-property key="Access-Control-Allow-Origin" value="*"/>
+            <add-message-property key="Access-Control-Allow-Headers" value="Content-Type, Accept"/>
+            <add-message-property key="Access-Control-Allow-Methods" value="GET, POST, OPTIONS"/>
+            <add-message-property key="Content-Type" value="application/json"/>
+            <add-message-property key="Cache-Control" value="no-cache"/>
+        </message-properties-transformer>
+
+        <logger message="#[payload]" level="INFO" doc:name="Logger"/>
+        <exception-strategy ref="globalCatch_Exception_StrategyDefault" doc:name="Reference Exception Strategy"/>
+<!--         <message-properties-transformer doc:name="Copy_of_Message Properties">
+            <add-message-property key="Access-Control-Allow-Origin" value="*"/>
+            <add-message-property key="Access-Control-Allow-Headers" value="Content-Type"/>
+            <add-message-property key="Access-Control-Allow-Methods" value="GET, POST, OPTIONS"/>
+        </message-properties-transformer> -->
+
+                 </flow>
+    <flow name="TestCreateUpdateQuery">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="db" allowedMethods="GET" doc:name="HTTP"/>
+        <db:update config-ref="Generic_Database_Configuration" doc:name="Database">
+            <db:dynamic-query><![CDATA[MERGE INTO AssetTermMap AS tab 
+USING (VALUES
+        (#[payload.IGCRID],'Asset from IGC2DGC',#[payload.Name],#[payload.DGCAID],CURRENT TIME,CURRENT DATE)
+    ) AS merge (IGCRID,TYPE,NAME,DGCAID,TIME,DATE)
+    ON tab.DGCAID = merge.DGCAID
+    WHEN MATCHED THEN
+        UPDATE SET tab.IGCRID = merge.IGCRID,
+                   tab.TYPE = merge.TYPE,
+                   tab.NAME = merge.NAME,
+				   tab.DGCAID = merge.DGCAID,
+				   tab.TIME = merge.TIME,
+				   tab.DATE = merge.DATE
+    WHEN NOT MATCHED THEN
+        INSERT (IGCRID, TYPE, NAME, DGCAID,TIME,DATE)
+        VALUES (merge.IGCRID, merge.TYPE, merge.NAME, merge.DGCAID,merge.TIME,merge.DATE)]]></db:dynamic-query>
+
+        </db:update>
+        <object-to-string-transformer doc:name="Object to String"/>
+        <logger level="INFO" doc:name="Logger" message="#[payload]"/>
+        <exception-strategy ref="globalChoice_Exception_Strategy" doc:name="Reference Exception Strategy"/>
+    </flow>
+    <flow name="TestDBDelete">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="delete" allowedMethods="GET" doc:name="HTTP"/>
+
+        <db:delete config-ref="Generic_Database_Configuration" doc:name="Database">
+            <db:dynamic-query><![CDATA[delete from AssetTermMap]]></db:dynamic-query>
+
+
+        </db:delete>
+
+
+        <logger message="#[payload]" level="INFO" doc:name="Logger"/>
+        <exception-strategy ref="globalChoice_Exception_Strategy" doc:name="Reference Exception Strategy"/>
+    </flow>
+    <flow name="FrontTemplete">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/IgcConnect" allowedMethods="GET" doc:name="HTTP"/>
+        <parse-template location="frontEnd/index.html" doc:name="Parse Template"/>
+
+        <logger message="#[payload]" level="INFO" doc:name="Logger"/>
+        <exception-strategy ref="globalChoice_Exception_Strategy" doc:name="Reference Exception Strategy"/>
+    </flow>
+      <flow name="igcIBMImage">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/igcimage" allowedMethods="GET" doc:name="HTTP"/>
+        <http:static-resource-handler resourceBase="${app.home}/web/IGClogo.png" defaultFile="frontEnd/index.html" doc:name="HTTP Static Resource Handler"/>
+    </flow>
+
+    <flow name="DBSelectAssetType">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="selectassettype" allowedMethods="GET" doc:name="HTTP"/>
+        <db:select config-ref="Generic_Database_Configuration" doc:name="Database">
+            <db:parameterized-query><![CDATA[select * from AssetType]]></db:parameterized-query>
+        </db:select>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <logger message="#[payload]" level="INFO" doc:name="Logger"/>
+        <exception-strategy ref="globalChoice_Exception_Strategy" doc:name="Copy_of_Copy_of_Reference Exception Strategy"/>
+    </flow>
+</mule>

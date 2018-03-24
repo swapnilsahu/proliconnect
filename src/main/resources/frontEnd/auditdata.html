@@ -1,0 +1,171 @@
+<!doctype html>
+<html ng-app="app">
+<head>
+  <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular-touch.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular-animate.js"></script>
+  <script src="http://ui-grid.info/docs/grunt-scripts/vfs_fonts.js"></script>
+  <script src="http://ui-grid.info/release/ui-grid.js"></script>
+  <link rel="stylesheet" href="http://ui-grid.info/release/ui-grid.css" type="text/css">
+  <style>
+    .header img {
+      float: right;
+      width: 300px;
+      height: 100px;
+    }
+    
+    .grid {
+      width: 100%;
+    }   
+    .watermark {
+      position: absolute;
+      top: 80px;
+      opacity: 0.25;
+      font-size: 3em;
+      width: 100%;
+      text-align: center;
+      z-index: 1000;
+    }
+	.marquee {
+    width: 450px;
+    margin: 0 auto;
+    white-space: nowrap;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+  
+  </style>
+</head>
+<body>
+  <div ng-controller="MainCtrl">
+  
+   <marquee bgcolor="#000000" ONMOUSEOVER="this.stop();"
+            ONMOUSEOUT="this.start();"><font color="#00FF00" size="5">Search The Specific Item Provided in the Header and Click on v Symbol to Filter the Data in the Grid !!</font> </marquee>
+    <br>
+	<br>
+<div ui-grid="gridOptions" ui-grid-grouping ui-grid-selection ui-grid-grouping class="grid" ng-cloak>
+        <div class="watermark" ng-if="!gridOptions.data.length">No data available
+        </div>
+</div>
+
+</div>
+<script>
+    var app = angular.module('app', ['ngTouch', 'ui.grid', 'ui.grid.selection', 'ui.grid.edit','ui.grid.grouping']);
+	app.config(function($provide){
+    $provide.decorator('uiGridGroupingService', function ($delegate,i18nService,gridUtil) {
+       
+        $delegate.groupingColumnBuilder = function (colDef, col, gridOptions) {
+       
+          if (colDef.enableGrouping === false){
+            return;
+          }
+       
+          if ( typeof(col.grouping) === 'undefined' && typeof(colDef.grouping) !== 'undefined') {
+            col.grouping = angular.copy(colDef.grouping);
+          } else if (typeof(col.grouping) === 'undefined'){
+            col.grouping = {};
+          }
+          
+          if (typeof(col.grouping) !== 'undefined' && typeof(col.grouping.groupPriority) !== undefined && col.grouping.groupPriority >= 0){
+            col.suppressRemoveSort = true;
+          } 
+       
+          col.groupingSuppressAggregationText = colDef.groupingSuppressAggregationText === true;
+          
+          var groupColumn = {
+            name: 'ui.grid.grouping.group',
+            title: i18nService.get().grouping.group,
+            icon: 'ui-grid-icon-indent-right',
+            shown: function () {
+              return typeof(this.context.col.grouping) === 'undefined' || 
+                     typeof(this.context.col.grouping.groupPriority) === 'undefined' ||
+                     this.context.col.grouping.groupPriority < 0;
+            },
+            action: function () {
+              $delegate.groupColumn( this.context.col.grid, this.context.col );
+            }
+          };
+
+          var ungroupColumn = {
+            name: 'ui.grid.grouping.ungroup',
+            title: i18nService.get().grouping.ungroup,
+            icon: 'ui-grid-icon-indent-left',
+            shown: function () {
+              return typeof(this.context.col.grouping) !== 'undefined' && 
+                     typeof(this.context.col.grouping.groupPriority) !== 'undefined' &&
+                     this.context.col.grouping.groupPriority >= 0;
+            },
+            action: function () {
+              $delegate.ungroupColumn( this.context.col.grid, this.context.col );
+            }
+          };
+          
+         
+          
+          if (!gridUtil.arrayContainsObjectWithProperty(col.menuItems, 'name', 'ui.grid.grouping.group')) {
+            col.menuItems.push(groupColumn);
+          }
+
+          if (!gridUtil.arrayContainsObjectWithProperty(col.menuItems, 'name', 'ui.grid.grouping.ungroup')) {
+            col.menuItems.push(ungroupColumn);
+          }
+        }
+        return $delegate;
+    })
+});
+    app.controller('MainCtrl', ['$scope', '$http', '$log', '$timeout', function($scope, $http, $log, $timeout, uiGridConstants, uiGridGroupingConstants) {
+      $scope.gridOptions = {
+       
+		enableFiltering: true,
+        selectionRowHeaderWidth: 35,
+		groupingShowAggregationMenu : false,
+        rowHeight: 35,
+        showGridFooter: true,
+		
+		
+      };
+	  
+      $scope.gridOptions.columnDefs = [{
+        name: 'NAME',
+        displayName: 'Name'
+      }, {
+        name: 'TYPE',
+        displayName: 'Type',
+		
+	}, {
+        name: 'IGCRID',
+        displayName: 'IGCRID'
+      },{
+        name: 'DATE',
+        displayName: 'DATE'
+      }, ,{
+        name: 'TIME',
+        displayName: 'TIME'
+      }, {
+		
+       name: 'DGCAID',
+       displayName: 'DGCAID'
+		
+      }];
+	 
+	   
+        $http({
+            method: 'GET',
+            url: 'http://10.11.13.153:8081/selectaudit',
+
+          })
+          .success(function(data) {
+            console.log("griddata", data);
+            $scope.gridOptions.data = data;
+
+          })
+          .error(function(error, status) {
+            console.log(error, status);
+          });
+    
+    }]);
+  </script>
+</body>
+
+</html>

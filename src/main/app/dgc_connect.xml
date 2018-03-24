@@ -1,0 +1,481 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:context="http://www.springframework.org/schema/context" xmlns:email="http://www.mulesoft.org/schema/mule/email"
+	xmlns:tracking="http://www.mulesoft.org/schema/mule/ee/tracking"
+	xmlns:dw="http://www.mulesoft.org/schema/mule/ee/dw" xmlns:metadata="http://www.mulesoft.org/schema/mule/metadata"
+	xmlns:collibra-dgc="http://www.mulesoft.org/schema/mule/collibra-dgc"
+	xmlns:json="http://www.mulesoft.org/schema/mule/json" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/collibra-dgc http://www.mulesoft.org/schema/mule/collibra-dgc/current/mule-collibra-dgc.xsd
+http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
+http://www.mulesoft.org/schema/mule/ee/dw http://www.mulesoft.org/schema/mule/ee/dw/current/dw.xsd
+http://www.mulesoft.org/schema/mule/ee/tracking http://www.mulesoft.org/schema/mule/ee/tracking/current/mule-tracking-ee.xsd
+http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd
+http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-current.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<http:request-config name="HTTP_Request_Configuration"
+		host="localhost" port="8082" doc:name="HTTP Request Configuration" />
+	<http:listener-config name="HTTP_Listener_Configuration1"
+		host="0.0.0.0" port="8082" doc:name="HTTP Listener Configuration" />
+    <http:request-config name="HTTP_Request_Configuration_DGC" host="10.11.13.160" port="4400" basePath="rest/latest" doc:name="HTTP Request Configuration">
+        <http:basic-authentication username="johnfisher" password="admin" preemptive="true"/>
+    </http:request-config>
+    <context:property-placeholder location="igc-DEV.properties"/>
+    <flow name="AsseListFlow2">
+		<http:listener config-ref="HTTP_Listener_Configuration"
+			path="datatp/{datatype}" allowedMethods="GET" doc:name="HTTP : datatype" />
+		<collibra-dgc:login config-ref="CollibraDGC__Connection_Managament_type_strategy"
+			doc:name="CollibraDGC : Login" />
+		<flow-ref name="dgc_connectSub_Flow" doc:name="dgc_connectSub_Flow" />
+		<collibra-dgc:list-assets
+			config-ref="CollibraDGC__Connection_Managament_type_strategy"
+			domainId="dbcc1f82-6eea-4d44-8a53-535f58565484" doc:name="List Assets" />
+        <dw:transform-message doc:name="Filter">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+payload	filter $.type.name == flowVars.datatype]]></dw:set-payload>
+        </dw:transform-message>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <logger message="response  from first service -------#[payload]" level="INFO" doc:name="Logger"/>
+		<flow-ref name="AssetList_SubFlow" doc:name="AssetList_SubFlow" />
+        <logger message="#[payload]" level="INFO" doc:name="Logger"/>
+	</flow>
+	<sub-flow name="AssetList_SubFlow">
+        <json:json-to-object-transformer returnClass="java.util.List" doc:name="JSON to Object"/>
+
+		<foreach collection="#[payload]" doc:name="For Each">
+
+			<logger message="id after transform-------------------#[payload.id]"
+				level="INFO" doc:name="Logger" />
+            <http:request config-ref="HTTP_Request_Configuration_DGC" path="/attribute_type/{aid}/attributes" method="GET" doc:name="HTTP: DGC Attribute">
+                <http:request-builder>
+                    <http:uri-param paramName="aid" value="#[payload.id]"/>
+                </http:request-builder>
+            </http:request>
+
+			<dw:transform-message doc:name="Transform Message"
+				metadata:id="be482778-6d81-47f9-bf0f-f18bee5e176f">
+				<dw:input-payload doc:sample="sample_data\Asset_4.dwl" />
+				<dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+{
+	"_type": flowVars."Term in IGC Payload",
+	short_description: payload.url,
+	status: flowVars."Status",
+	parent_category: flowVars."ParentCategory : DGC2IGC",
+	name: payload.name,
+	example: payload.status.name
+}]]></dw:set-payload>
+			</dw:transform-message>
+            <json:object-to-json-transformer doc:name="Object to JSON"/>
+
+		 	 <http:request config-ref="HTTP_Request_Configuration_IGC"
+				path="assets/" method="POST" doc:name="HTTP">
+				<http:request-builder>
+					<http:header headerName="Content-Type" value="application/json" />
+					<http:header headerName="Accept-Encoding" value="identity" />
+				</http:request-builder>
+			</http:request>
+
+		</foreach>
+	</sub-flow>
+	<flow name="AsseListFlow">
+		<http:listener config-ref="HTTP_Listener_Configuration"
+			path="datatype/{datatype}" allowedMethods="GET" doc:name="HTTP : datatype" />
+		<collibra-dgc:login config-ref="CollibraDGC__Connection_Managament_type_strategy"
+			doc:name="CollibraDGC : Login" />
+		<flow-ref name="dgc_connectSub_Flow" doc:name="dgc_connectSub_Flow" />
+        <collibra-dgc:list-assets config-ref="CollibraDGC__Connection_Managament_type_strategy" domainId="dbcc1f82-6eea-4d44-8a53-535f58565484" doc:name="List Assets"/>
+        <dw:transform-message doc:name="Filter">
+            <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+payload	filter $.type.name == flowVars.datatype]]></dw:set-payload>
+        </dw:transform-message>
+        <set-variable variableName="FilteredAssets" value="#[payload]" doc:name="Variable: FilteredAssets"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <logger message="#[flowVars.FilteredAssets]----------------Actualllllllllllllllllllllllll -------#[payload]" level="INFO" doc:name="Logger"/>
+        <json:json-to-object-transformer returnClass="java.util.List" doc:name="JSON to Object"/>
+        <logger message="Payload Before For Each------------------------#[payload]" level="INFO" doc:name="Logger"/>
+        <foreach doc:name="For Each">
+            <set-variable variableName="AssetPayload" value="#[payload]" doc:name="Variable: AssetPayload"/>
+            <set-variable variableName="Assetid" value="#[payload.id]" doc:name="storeAssetID"/>
+            <http:request config-ref="HTTP_Request_Configuration_DGC" path="/attribute_type/{aid}/attributes" method="GET" doc:name="HTTP: DGC Attribute">
+                <http:request-builder>
+                    <http:uri-param paramName="aid" value="#[payload.id]"/>
+                </http:request-builder>
+            </http:request>
+            <dw:transform-message doc:name="Transform Message">
+                <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+%var loc=  flatten payload.attributeReference filter $.labelReference.signifier == "Location"
+%var desc= flatten payload.attributeReference filter $.labelReference.signifier == "Description"
+%var datatype=  flatten payload.attributeReference filter $.labelReference.signifier == "Data Type"
+%var datatypepre= flatten payload.attributeReference filter $.labelReference.signifier == "Data Type Precision"
+%var scope=  flatten payload.attributeReference filter $.labelReference.signifier == "Scope"
+%var descex=  flatten payload.attributeReference filter $.labelReference.signifier == "Descriptive Example"
+---
+//using (
+//      so = payload[1].*attributeReference
+//)
+//{
+//	
+//      "location" : ((so map { LOCA: $.value                    
+//                }) filter $.labelReference.signifier == "Location")[0]
+//      
+
+
+ {
+	"id": flowVars.AssetPayload.id,
+      "createdBy": flowVars.AssetPayload.createdBy,
+      "creationDate": flowVars.AssetPayload.creationDate,
+      "lastModifiedBy": flowVars.AssetPayload.lastModifiedBy,
+      "lastModificationDate": flowVars.AssetPayload.lastModificationDate,
+      "name": flowVars.AssetPayload.name,
+      "url": flowVars.AssetPayload.url,
+      "description" : desc.value,
+      "datatype" : datatype.value,
+      "descriptiveExample" : descex.value ,
+      "dataTypePrecision" : datatypepre.value,
+      "scope" : scope.value ,
+      "location" : loc.value,
+      "type": {
+        "id": flowVars.AssetPayload.type.id ,
+        "name": flowVars.AssetPayload.type.name
+      },
+      "status": {
+        "id":  flowVars.AssetPayload.status.id,
+        "name": flowVars.AssetPayload.status.name
+      },
+      "domain": {
+        "id": flowVars.AssetPayload.domain.id,
+        "name": flowVars.AssetPayload.domain.name
+	}
+
+}]]></dw:set-payload>
+            </dw:transform-message>
+            <json:object-to-json-transformer doc:name="Object to JSON"/>
+            <dw:transform-message doc:name="Transform Message" metadata:id="0bd2fd17-f1b1-4d0e-914b-146e4203aecc">
+                <dw:input-payload/>
+                <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+{
+	"_type": flowVars."Term in IGC Payload",
+	short_description: payload.description[0],
+	status: flowVars.Status,
+	parent_category: flowVars."ParentCategory : DGC2IGC",
+	name: flowVars.AssetPayload.name,
+	example: payload.location[0],
+	long_description: payload.scope[0],
+	additional_abbreviation:payload.descriptiveExample[0],
+	custom_Acronym: payload.datatype[0],
+	abbreviation: "Abbreviation TEst Static in Transformer",
+	"custom_Business Model Mapping" : "Static Business Model Mapping Test",
+	custom_Derivation: "Static custom Derivation"
+}]]></dw:set-payload>
+            </dw:transform-message>
+            <json:object-to-json-transformer doc:name="Object to JSON"/>
+            <logger message="-----------------------Logger before Posting----------------------- #[payload]" level="INFO" doc:name="Logger"/>
+
+            <http:request config-ref="HTTP_Request_Configuration_IGC" path="assets/" method="POST" doc:name="HTTP">
+                <http:request-builder>
+                    <http:header headerName="Content-Type" value="application/json"/>
+                    <http:header headerName="Accept-Encoding" value="identity"/>
+                </http:request-builder>
+            </http:request>
+            <logger message="#[message.inboundProperties.Location.substring('53')] and #[flowVars.Assetid]" level="INFO" doc:name="Logger"/>
+        </foreach>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <logger message="#[payload]" level="INFO" doc:name="Logger"/>
+
+
+	</flow>
+
+	<flow name="FrontAsseListFlow">
+		<http:listener config-ref="HTTP_Listener_Configuration"
+			path="assetfront" allowedMethods="POST" doc:name="HTTP : assetfront" />
+		<flow-ref name="dgc_connectSub_Flow" doc:name="dgc_connectSub_Flow" />
+        <json:json-to-object-transformer returnClass="java.util.List" doc:name="JSON to Object"/>
+        <logger message="Payload Before For Each------------------------#[payload]" level="INFO" doc:name="Logger"/>
+        <foreach doc:name="For Each">
+            <set-variable variableName="AssetPayload" value="#[payload]" doc:name="Variable: AssetPayload"/>
+            <set-variable variableName="name" value="#[payload.name]" doc:name="Variable: Name"/>
+            <set-variable variableName="Assetid" value="#[payload.id]" doc:name="storeAssetID"/>
+            <http:request config-ref="HTTP_Request_Configuration_DGC" path="/attribute_type/{aid}/attributes" method="GET" doc:name="HTTP: DGC Attribute">
+                <http:request-builder>
+                    <http:uri-param paramName="aid" value="#[payload.id]"/>
+                </http:request-builder>
+            </http:request>
+            <logger message="#[payload]" level="INFO" doc:name="Logger"/>
+            <dw:transform-message doc:name="Transform Message">
+                <dw:set-payload><![CDATA[%dw 1.0
+%output application/java 
+%var description=  flatten payload.attributeReference filter $.labelReference.signifier == "Description"
+%var attributetype= flatten payload.attributeReference filter $.labelReference.signifier == "Type"
+%var phi=  flatten payload.attributeReference filter $.labelReference.signifier == "PHI"
+%var attributestatus= flatten payload.attributeReference filter $.labelReference.signifier == "Status"
+%var example=  flatten payload.attributeReference filter $.labelReference.signifier == "Example"
+---
+//using (
+//      so = payload[1].*attributeReference
+//)
+//{
+//	
+//      "location" : ((so map { LOCA: $.value                    
+//                }) filter $.labelReference.signifier == "Location")[0]
+//      
+
+
+ {
+	"id": flowVars.AssetPayload.id,
+      "createdBy": flowVars.AssetPayload.createdBy,
+      "creationDate": flowVars.AssetPayload.creationDate,
+      "lastModifiedBy": flowVars.AssetPayload.lastModifiedBy,
+      "lastModificationDate": flowVars.AssetPayload.lastModificationDate,
+      "name": flowVars.AssetPayload.name,
+      "url": flowVars.AssetPayload.url,
+     "description" : description.value reduce ($$ ++ $), // description
+     "attributetype" : attributetype.value reduce ($$ ++ $), //type
+     "phi" : phi.value reduce ($$ ++ $), // phi
+     "attributestatus" : attributestatus.value reduce ($$ ++ $), // status
+     "example" : "Example Not Available" when example.value == null otherwise example.value reduce ($$ ++ $), // example
+     "type": {
+        "id": flowVars.AssetPayload.type.id ,
+        "name": flowVars.AssetPayload.type.name
+      },
+      "status": {
+        "id":  flowVars.AssetPayload.status.id,
+        "name": flowVars.AssetPayload.status.name
+      },
+      "domain": {
+        "id": flowVars.AssetPayload.domain.id,
+        "name": flowVars.AssetPayload.domain.name
+	}
+
+}]]></dw:set-payload>
+            </dw:transform-message>
+
+            <json:object-to-json-transformer doc:name="Object to JSON"/>
+            <logger message="#[payload]" level="INFO" doc:name="Logger"/>
+            <dw:transform-message doc:name="Transform Message" metadata:id="0bd2fd17-f1b1-4d0e-914b-146e4203aecc">
+                <dw:input-payload mimeType="application/json"/>
+                <dw:set-payload><![CDATA[%dw 1.0
+%output application/java 
+---
+{
+"_type" : flowVars."Term in IGC Payload",
+"short_description" : payload.description replace "<br/>" with "",
+"name" : payload.name,
+"status": upper payload.attributestatus ,
+"parent_category": flowVars."ParentCategory : DGC2IGC",
+"example": payload.example replace "<br/>" with "" ,
+"custom_PHI" : payload.phi ,
+"type": upper payload.attributetype 
+}]]></dw:set-payload>
+            </dw:transform-message>
+            <logger message="#[payload]" level="INFO" doc:name="Logger"/>
+            <set-variable variableName="ActualPayload" value="#[payload]" doc:name="Variable: ActualPayload"/>
+            <logger message="#[payload]" level="INFO" doc:name="Logger"/>
+            <flow-ref name="dbCheck" doc:name="dbCheck"/>
+            <logger message="-----------------------Logger before Choice-------------------&gt;&gt;&gt;&gt;&gt; #[payload]&lt;&lt;&lt;&lt;&lt;-----------" level="INFO" doc:name="Logger"/>
+            <choice doc:name="Choice">
+                <when expression="#[flowVars.flag=='true']">
+                    <set-payload value="#[flowVars.ActualPayload]" doc:name="Set Payload" mimeType="application/java"/>
+                    <logger message="Transform Message for Update---  &gt;&gt; #[payload]" level="INFO" doc:name="Logger"/>
+                    <dw:transform-message doc:name="Transform Message">
+                        <dw:input-payload doc:sample="C:\Users\ssahu\Desktop\JSON\Create_IGCTerm.json"/>
+                        <dw:input-variable doc:sample="sample_data\list_map_3.dwl" variableName="urid"/>
+                        <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+{
+  "ids" :[flowVars.urid.IGCRID reduce ($$ ++ $)] ,
+  "properties" : {
+    "short_description" : payload.short_description ++ "updated"
+  }
+}]]></dw:set-payload>
+                    </dw:transform-message>
+                    <json:object-to-json-transformer doc:name="Object to JSON"/>
+                    <logger message="Before Updating---------------&gt; #[payload]" level="INFO" doc:name="Logger"/>
+
+                    <http:request config-ref="HTTP_Request_Configuration_IGC" path="assets/" method="PUT" doc:name="HTTP: PUT">
+                        <http:request-builder>
+                            <http:header headerName="Content-Type" value="application/json"/>
+                            <http:header headerName="Accept-Encoding" value="identity"/>
+                        </http:request-builder>
+                    </http:request>
+                    <dw:transform-message doc:name="Transform Message">
+                        <dw:set-payload><![CDATA[%dw 1.0
+%output application/java
+---
+{ 
+	ID: payload.ids reduce ($$ ++ $)
+}]]></dw:set-payload>
+                    </dw:transform-message>
+                    <logger message="#[payload.ID]" level="INFO" doc:name="Logger"/>
+                    <set-variable variableName="newID" value="#[payload.ID]" doc:name="Variable: newID"/>
+                </when>
+                <otherwise >
+                    <set-payload value="#[flowVars.ActualPayload]" doc:name="Set Payload"/>
+                    <json:object-to-json-transformer doc:name="Object to JSON"/>
+                    <logger message="Before Creating -------&gt; #[payload]" level="INFO" doc:name="Logger"/>
+                    <http:request config-ref="HTTP_Request_Configuration_IGC" path="assets/" method="POST" doc:name="HTTP: POST">
+                        <http:request-builder>
+                            <http:header headerName="Content-Type" value="application/json"/>
+                            <http:header headerName="Accept-Encoding" value="identity"/>
+                        </http:request-builder>
+                    </http:request>
+                    <set-variable variableName="newID" value="#[message.inboundProperties.Location.substring('53')]" doc:name="Variable: newID"/>
+                </otherwise>
+            </choice>
+
+            <db:update config-ref="Generic_Database_Configuration" doc:name="Database">
+                <db:parameterized-query><![CDATA[MERGE INTO AssetTermMap AS tab 
+USING (VALUES
+        (#[flowVars.'newID'],'Asset from DGC to IGC',#[flowVars.name],#[flowVars.Assetid],CURRENT TIME,CURRENT DATE)
+    ) AS merge (IGCRID,TYPE,NAME,DGCAID,TIME,DATE)
+    ON tab.DGCAID = merge.DGCAID
+    WHEN MATCHED THEN
+        UPDATE SET tab.IGCRID = merge.IGCRID,
+                   tab.TYPE = merge.TYPE,
+                   tab.NAME = merge.NAME,
+				   tab.DGCAID = merge.DGCAID,
+				   tab.TIME = merge.TIME,
+				   tab.DATE = merge.DATE
+    WHEN NOT MATCHED THEN
+        INSERT (IGCRID, TYPE, NAME, DGCAID,TIME,DATE)
+        VALUES (merge.IGCRID, merge.TYPE, merge.NAME, merge.DGCAID,merge.TIME,merge.DATE)]]></db:parameterized-query>
+
+            </db:update>
+            <logger message="#[payload]" level="INFO" doc:name="Logger"/>
+        </foreach>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <logger message="#[payload]" level="INFO" doc:name="Logger"/>
+        <exception-strategy ref="globalCatch_Exception_StrategyForFrontEnd" doc:name="Reference Exception Strategy"/>
+
+
+	</flow>
+    <sub-flow name="dbCheck">
+        <db:select config-ref="Generic_Database_Configuration" doc:name="Database">
+            <db:parameterized-query><![CDATA[select IGCRID from AssetTermMap where DGCAID = #[flowVars.Assetid]]]></db:parameterized-query>
+        </db:select>
+        <set-variable variableName="flag" value="#[payload!=[]]" doc:name="Variable: DBFlag"/>
+        <set-variable variableName="urid" value="#[payload]" doc:name="Variable: IGC Update RID"/>
+        <logger message="#[flowVars.flag]-----------------&gt;&gt;&gt;&gt;&gt;&gt;#[flowVars.urid]-----#[payload]" level="INFO" doc:name="Logger"/>
+    </sub-flow>
+
+
+	<sub-flow name="dgc_connectSub_Flow">
+		<set-variable variableName="Term in IGC Payload" value="term"
+			doc:name="Variable: _term" />
+		<set-variable variableName="Status" value="ACCEPTED"
+			doc:name="Variable: status" />
+		<set-variable variableName="ParentCategory : DGC2IGC"
+			value="6662c0f2.ee6a64fe.1mdlmv34b.anfhlbg.dmjrjk.5ct1qigk0ndbkd22sqp8i"
+			doc:name="Variable: parent Category" />
+		<set-variable variableName="datatype"
+			value="#[message.inboundProperties.'http.uri.params'.datatype]"
+			doc:name="Variable: DataType" />
+        <set-variable variableName="IGCcheck" value="#[payload]" doc:name="Variable: IGCcheck"/>
+	</sub-flow>
+	<flow name="IGCPostTest">
+		<http:listener config-ref="HTTP_Listener_Configuration"
+			path="posting" allowedMethods="POST" doc:name="HTTP: posting" />
+		<http:request config-ref="HTTP_Request_Configuration_IGC"
+			path="assets/" method="POST" doc:name="HTTP">
+			<http:request-builder>
+				<http:header headerName="Content-Type" value="application/json" />
+				<http:header headerName="Accept-Encoding" value="identity" />
+			</http:request-builder>
+		</http:request>
+		<logger message="#[payload]" level="INFO" doc:name="Logger" />
+	</flow>
+    <flow name="ListofAssets">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="AssetList" allowedMethods="GET" doc:name="HTTP"/>
+        <collibra-dgc:list-assets config-ref="CollibraDGC__Connection_Managament_type_strategy" domainId="#[message.inboundProperties.'http.query.params'.domainId]" doc:name="CollibraDGC"/>
+         <message-properties-transformer mimeType="application/json" doc:name="Message Properties">
+            <add-message-property key="Access-Control-Allow-Origin" value="*"/>
+            <add-message-property key="Access-Control-Allow-Headers" value="Content-Type"/>
+            <add-message-property key="Access-Control-Allow-Methods" value="GET, POST, OPTIONS"/>
+            <add-message-property key="Content-Type" value="application/json"/>
+            <add-message-property key="Cache-Control" value="no-cache"/>
+        </message-properties-transformer>
+       
+        <logger level="INFO" doc:name="Logger" message="#[message.inboundProperties.'http.query.params'.domainId]---------------#[payload]"/>
+    </flow>
+	<flow name="Copy_of_dgc_connectFlow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="data" allowedMethods="GET" doc:name="HTTP: data"/>
+        <collibra-dgc:login config-ref="CollibraDGC__Connection_Managament_type_strategy" doc:name="CollibraDGC"/>
+        <collibra-dgc:get-asset config-ref="CollibraDGC__Connection_Managament_type_strategy" assetId="b3d7205d-2d89-41af-9c7d-299e4a12dcf0" doc:name="CollibraDGC"/>
+        <json:object-to-json-transformer doc:name="Object to JSON"/>
+        <collibra-dgc:logout config-ref="CollibraDGC__Connection_Managament_type_strategy" doc:name="CollibraDGC"/>
+        <logger message="#[payload]" level="INFO" doc:name="Logger"/>
+
+
+	</flow>
+    <flow name="DGCRestService">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/drest" allowedMethods="GET" doc:name="HTTP: drest"/>
+        <http:request config-ref="HTTP_Request_Configuration_DGC" path="/attribute_type/{id}/attributes" method="GET" doc:name="HTTP">
+            <http:request-builder>
+                <http:uri-param paramName="id" value="#[message.inboundProperties.'http.query.params'.id]"/>
+
+            </http:request-builder>
+        </http:request>
+    </flow>
+      <flow name="dgc_connectFrontEnd">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="community/all" allowedMethods="GET" doc:name="HTTP"/>
+        <http:request config-ref="HTTP_Request_Configuration_DGC" path="community/all" method="GET" doc:name="HTTP">
+        </http:request>
+        <response>
+            <message-properties-transformer doc:name="Message Properties">
+                <add-message-property key="Access-Control-Allow-Origin" value="*"/>
+                <add-message-property key="Access-Control-Allow-Headers" value="Content-Type"/>
+                <add-message-property key="Access-Control-Allow-Methods" value="GET, POST, OPTIONS"/>
+            </message-properties-transformer>
+        </response>
+
+
+
+
+
+
+
+
+
+        <logger message="#[payload]" level="INFO" doc:name="Logger"/>
+        <exception-strategy ref="globalCatch_Exception_StrategyDefault" doc:name="Reference Exception Strategy"/>
+
+
+    </flow>
+    <flow name="dgcCollibraImage">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/collibraimage" allowedMethods="GET" doc:name="HTTP"/>
+        <http:static-resource-handler resourceBase="${app.home}/web/collibralogo.png" defaultFile="frontEnd/dgcindex.html" doc:name="HTTP Static Resource Handler"/>
+    </flow>
+    <flow name="DGCFrontTemplate">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/DgcConnect" allowedMethods="GET" doc:name="HTTP"/>
+        <parse-template location="frontEnd/dgcindex.html" doc:name="Parse Template"/>
+        <logger message=" #[payload]" level="INFO" doc:name="Logger"/>
+    </flow>
+    <flow name="DGCDomainService">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/community" allowedMethods="GET" doc:name="HTTP"/>
+        <http:request config-ref="HTTP_Request_Configuration_DGC" path="community/{communityId}" method="GET" doc:name="HTTP">
+            <http:request-builder>
+                <http:uri-param paramName="communityId" value="#[message.inboundProperties.'http.query.params'.communityId]"/>
+            </http:request-builder>
+        </http:request>
+       <message-properties-transformer doc:name="Message Properties">
+                <add-message-property key="Access-Control-Allow-Origin" value="*"/>
+                <add-message-property key="Access-Control-Allow-Headers" value="Content-Type"/>
+                <add-message-property key="Access-Control-Allow-Methods" value="GET, POST, OPTIONS"/>
+            </message-properties-transformer>
+        <logger level="INFO" doc:name="Logger"/>
+    </flow>
+
+</mule>

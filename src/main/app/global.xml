@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+    <choice-exception-strategy name="globalChoice_Exception_Strategy">
+        <catch-exception-strategy when="#[exception.causedBy(com.ibm.db2.jcc.am.SqlSyntaxErrorException)]" doc:name="Catch Exception Strategy Sql Syntax Exception">
+            <set-payload value="There is some problem with DB
+#[exception.getSummaryMessage()]
+Contact Support if issue persist." doc:name="Set Payload"/>
+            <set-property propertyName="http.status" value="500" doc:name="Property"/>
+            <logger message="#[payload]" level="INFO" doc:name="Logger"/>
+        </catch-exception-strategy>
+        <catch-exception-strategy when="#[exception.causedBy(com.collibra.dgc.rest.client.exceptions.UnexpectedResponseException)]" doc:name="Catch Exception Strategy Collibra Unexpected Response">
+            <set-payload value="Please try again, there is some problem in connecting Collibra DGC.
+#[exception.getSummaryMessage()]
+Contact Support if issue persist." doc:name="Set Payload"/>
+            <set-property propertyName="http.status" value="500" doc:name="Property"/>
+            <logger message="#[payload]" level="INFO" doc:name="Logger"/>
+        </catch-exception-strategy>
+        <catch-exception-strategy when="#[exception.causedBy(java.lang.NullPointerException)]" doc:name="Catch Exception Strategy FrontEnd Null Pointer">
+            <set-payload value="Please check the URL and try again.
+#[exception.getSummaryMessage()]
+Contact Support if issue persist." doc:name="Set Payload"/>
+            <set-property propertyName="http.status" value="500" doc:name="Property"/>
+            <logger message="#[payload]" level="INFO" doc:name="Logger"/>
+        </catch-exception-strategy>
+        <catch-exception-strategy doc:name="Catch Exception Strategy">
+            <set-payload value="There is an Exception in Flow, Try Again
+Contact Support if issue persist." doc:name="Set Payload"/>
+            <set-property propertyName="http.status" value="500" doc:name="Property"/>
+            <logger message="#[payload]" level="INFO" doc:name="Logger"/>
+        </catch-exception-strategy>
+    </choice-exception-strategy>
+    <catch-exception-strategy name="globalCatch_Exception_StrategyForFrontEnd">
+        <set-payload value="Please check the URL and try again, 
+Contact Support if issue persist." doc:name="Set Payload"/>
+        <set-property propertyName="http.status" value="500" doc:name="Property"/>
+        <logger message="#[payload]" level="INFO" doc:name="Logger"/>
+    </catch-exception-strategy>
+    <catch-exception-strategy name="globalCatch_Exception_StrategyDefault">
+        <set-payload value="Please try again, there is some problem in moving Terms to Collibra DGC.
+#[exception.getSummaryMessage()]
+
+Contact Support if issue persist." doc:name="Set Payload"/>
+        <set-property propertyName="http.status" value="500" doc:name="Property"/>
+        <logger message="#[payload]" level="INFO" doc:name="Logger"/>
+    </catch-exception-strategy>
+</mule>

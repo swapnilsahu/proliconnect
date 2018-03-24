@@ -1,0 +1,342 @@
+{
+  "custom_Acronym": "acronym Test Data",
+  "custom_Connect to more information": "more information on test",
+  "custom_Decomposition": "fdfsdfsdfsfesf",
+  "assigned_assets": {
+    "items": [
+      {
+        "_type": "database_column",
+        "_id": "b1c497ce.60641b50.7pi57kia5.41tno7b.cf5k0b.veth8prjpklvkvs4jap34",
+        "_url": "https://10.11.13.155:9445/ibm/iis/igc-rest/v1/assets/b1c497ce.60641b50.7pi57kia5.41tno7b.cf5k0b.veth8prjpklvkvs4jap34",
+        "_name": "C_OBJECT"
+      },
+      {
+        "_type": "database_column",
+        "_id": "b1c497ce.60641b50.1mdlmeqe4.lkqgv9b.349ln1.ltjvnpo0rtg5arj6c727b",
+        "_url": "https://10.11.13.155:9445/ibm/iis/igc-rest/v1/assets/b1c497ce.60641b50.1mdlmeqe4.lkqgv9b.349ln1.ltjvnpo0rtg5arj6c727b",
+        "_name": "SALES_ORG"
+      }
+    ],
+    "paging": {
+      "numTotal": 2,
+      "pageSize": 10,
+      "end": 1,
+      "begin": 0
+    }
+  },
+  "_context": [
+    {
+      "_type": "category",
+      "_id": "6662c0f2.ee6a64fe.1mdlmv34b.anfhlbg.dmjrjk.5ct1qigk0ndbkd22sqp8i",
+      "_url": "https://10.11.13.155:9445/ibm/iis/igc-rest/v1/assets/6662c0f2.ee6a64fe.1mdlmv34b.anfhlbg.dmjrjk.5ct1qigk0ndbkd22sqp8i",
+      "_name": "DGC2IGC"
+    }
+  ],
+  "created_on": "2017-04-17T09:51:14Z",
+  "_name": "Export_01",
+  "type": "NONE",
+  "custom_Data Type": "alpha",
+  "custom_Security Level": "11",
+  "_type": "term",
+  "custom_Transaction Type": "All",
+  "custom_Formula": "1+100",
+  "short_description": "Term01 to Export01 DGC",
+  "_id": "6662c0f2.e1b1ec6c.1mdlmv35e.1618tt1.8mb4gb.nahef1pustcmu5k10omdh",
+  "modified_by": "Administrator IIS",
+  "custom_Priority": "High",
+  "name": "Export_01",
+  "development_log": {
+    "items": [
+      {
+        "person": "Administrator IIS",
+        "new_state": "Synched",
+        "workflow_task": "EDIT",
+        "user_id": "isadmin",
+        "comment": "publish\n",
+        "date": "2017-05-22T10:35:32Z",
+        "activity": "PUBLISHED"
+      },
+      {
+        "person": "Administrator IIS",
+        "new_state": "Approved",
+        "workflow_task": "EDIT",
+        "user_id": "isadmin",
+        "comment": "approveeeeeeeeeeeed",
+        "date": "2017-05-22T10:35:20Z",
+        "activity": "Approved"
+      },
+      {
+        "person": "Administrator IIS",
+        "new_state": "Pending Approval",
+        "workflow_task": "EDIT",
+        "user_id": "isadmin",
+        "comment": "aprovval for mule test",
+        "date": "2017-05-22T10:35:11Z",
+        "activity": "SentForApproval"
+      },
+      {
+        "person": "Administrator IIS",
+        "new_state": "Draft",
+        "workflow_task": "EDIT",
+        "user_id": "isadmin",
+        "comment": "Test test test ",
+        "date": "2017-05-22T10:34:36Z",
+        "activity": "EDIT",
+        "changes": [
+          {
+            "new_value": [
+              "Business Model Mapping Test"
+            ],
+            "old_value": [],
+            "property": "Business Model Mapping"
+          },
+          {
+            "new_value": [
+              "url url url test"
+            ],
+            "old_value": [],
+            "property": "Link"
+          },
+          {
+            "new_value": "ACCEPTED",
+            "old_value": "CANDIDATE",
+            "property": "Status"
+          },
+          {
+            "new_value": "Long Description Test",
+            "old_value": "",
+            "property": "Long Description"
+          },
+          {
+            "new_value": [
+              "more information on test"
+            ],
+            "old_value": [],
+            "property": "Connect to more information"
+          },
+          {
+            "new_value": "usage testinggggggsadhiasudlakhflfheil",
+            "old_value": "",
+            "property": "Usage"
+          },
+          {
+            "new_value": "additional abb testiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiig",
+            "old_value": "",
+            "property": "Additional Abbreviation"
+          },
+          {
+            "new_value": [
+              "acronym Test Data"
+            ],
+            "old_value": [],
+            "property": "Acronym"
+          },
+          {
+            "new_value": [
+              "Business Analyst Jack Donaghy"
+            ],
+            "old_value": [],
+            "property": "Steward"
+          },
+          {
+            "new_value": "abbreviation testing test",
+            "old_value": "exe",
+            "property": "Abbreviation"
+          },
+          {
+            "new_value": [
+              "fdfsdfsdfsfesf"
+            ],
+            "old_value": [],
+            "property": "Decomposition"
+          },
+          {
+            "new_value": [
+              "elufwekufhwvebkvhwebjkh"
+            ],
+            "old_value": [],
+            "property": "Derivation"
+          }
+        ]
+      },
+      {
+        "person": "Administrator IIS",
+        "new_state": "Draft",
+        "workflow_task": "EDIT",
+        "user_id": "isadmin",
+        "comment": "",
+        "date": "2017-04-25T12:32:26Z",
+        "activity": "EDIT",
+        "changes": [
+          {
+            "new_value": [
+              "High"
+            ],
+            "old_value": [
+              "Medium"
+            ],
+            "property": "Priority"
+          }
+        ]
+      },
+      {
+        "person": "Administrator IIS",
+        "new_state": "Draft",
+        "workflow_task": "EDIT",
+        "user_id": "isadmin",
+        "comment": "",
+        "date": "2017-04-25T12:32:18Z",
+        "activity": "EDIT"
+      },
+      {
+        "person": "Administrator IIS",
+        "new_state": "Draft",
+        "workflow_task": "EDIT",
+        "user_id": "isadmin",
+        "comment": "",
+        "date": "2017-04-25T12:31:47Z",
+        "activity": "EDIT",
+        "changes": [
+          {
+            "new_value": [
+              "11"
+            ],
+            "old_value": [
+              "1"
+            ],
+            "property": "Security Level"
+          }
+        ]
+      },
+      {
+        "person": "Administrator IIS",
+        "new_state": "Draft",
+        "workflow_task": "EDIT",
+        "user_id": "isadmin",
+        "comment": "",
+        "date": "2017-04-25T12:31:15Z",
+        "activity": "EDIT"
+      },
+      {
+        "person": "Administrator IIS",
+        "new_state": "Draft",
+        "workflow_task": "EDIT",
+        "user_id": "isadmin",
+        "comment": "",
+        "date": "2017-04-25T12:30:44Z",
+        "activity": "EDIT"
+      },
+      {
+        "person": "Administrator IIS",
+        "new_state": "Draft",
+        "workflow_task": "EDIT",
+        "user_id": "isadmin",
+        "comment": "",
+        "date": "2017-04-25T12:29:17Z",
+        "activity": "EDIT",
+        "changes": [
+          {
+            "new_value": [
+              "1+100"
+            ],
+            "old_value": [
+              "1+1"
+            ],
+            "property": "Formula"
+          }
+        ]
+      }
+    ],
+    "paging": {
+      "numTotal": 10,
+      "beginIndex": 0,
+      "endIndex": 9,
+      "pageSize": 10
+    }
+  },
+  "category_path": {
+    "items": [
+      {
+        "_type": "category",
+        "_id": "6662c0f2.ee6a64fe.1mdlmv34b.anfhlbg.dmjrjk.5ct1qigk0ndbkd22sqp8i",
+        "_url": "https://10.11.13.155:9445/ibm/iis/igc-rest/v1/assets/6662c0f2.ee6a64fe.1mdlmv34b.anfhlbg.dmjrjk.5ct1qigk0ndbkd22sqp8i",
+        "_name": "DGC2IGC"
+      }
+    ],
+    "paging": {
+      "numTotal": 1,
+      "pageSize": 10,
+      "end": 0,
+      "begin": 0
+    }
+  },
+  "custom_Sensitivity Flag": "H",
+  "governed_by_rules": {
+    "items": [
+      {
+        "_type": "information_governance_rule",
+        "_id": "6662c0f2.e1b13efc.1mdlm5fp4.4ad95o4.s1rf9p.pc14clq0rmits59f6rfdm",
+        "_url": "https://10.11.13.155:9445/ibm/iis/igc-rest/v1/assets/6662c0f2.e1b13efc.1mdlm5fp4.4ad95o4.s1rf9p.pc14clq0rmits59f6rfdm",
+        "_name": "Bank_Payment_Terms"
+      }
+    ],
+    "paging": {
+      "numTotal": 1,
+      "pageSize": 10,
+      "end": 0,
+      "begin": 0
+    }
+  },
+  "created_by": "Administrator IIS",
+  "modified_on": "2017-06-01T03:10:32Z",
+  "additional_abbreviation": "additional abb testiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiig",
+  "status": "ACCEPTED",
+  "parent_category": {
+    "_type": "category",
+    "_id": "6662c0f2.ee6a64fe.1mdlmv34b.anfhlbg.dmjrjk.5ct1qigk0ndbkd22sqp8i",
+    "_url": "https://10.11.13.155:9445/ibm/iis/igc-rest/v1/assets/6662c0f2.ee6a64fe.1mdlmv34b.anfhlbg.dmjrjk.5ct1qigk0ndbkd22sqp8i",
+    "_name": "DGC2IGC"
+  },
+  "labels": {
+    "items": [
+      {
+        "_type": "label",
+        "_id": "6662c0f2.22257cc4.7pi4452v2.km1dqrd.fcdmej.6b29hfb53dmfbv9q60dbr",
+        "_url": "https://10.11.13.155:9445/ibm/iis/igc-rest/v1/assets/6662c0f2.22257cc4.7pi4452v2.km1dqrd.fcdmej.6b29hfb53dmfbv9q60dbr",
+        "_name": "Business Owner"
+      }
+    ],
+    "paging": {
+      "numTotal": 1,
+      "pageSize": 10,
+      "end": 0,
+      "begin": 0
+    }
+  },
+  "custom_Classification Role": "Business Classification",
+  "abbreviation": "abbreviation testing test",
+  "custom_Business Model Mapping": "Business Model Mapping Test",
+  "custom_Derivation": "elufwekufhwvebkvhwebjkh",
+  "custom_Is Searchable": "TRUE",
+  "is_modifier": false,
+  "long_description": "Long Description Test",
+  "_url": "https://10.11.13.155:9445/ibm/iis/igc-rest/v1/assets/6662c0f2.e1b1ec6c.1mdlmv35e.1618tt1.8mb4gb.nahef1pustcmu5k10omdh",
+  "usage": "usage testinggggggsadhiasudlakhflfheil",
+  "custom_Link": "url url url test",
+  "stewards": {
+    "items": [
+      {
+        "_type": "steward_user",
+        "_id": "b1c497ce.285feb.7pi4drqp5.cdqhpo5.ll96kn.a1h4424euarltlr40rih620",
+        "_url": "https://10.11.13.155:9445/ibm/iis/igc-rest/v1/assets/b1c497ce.285feb.7pi4drqp5.cdqhpo5.ll96kn.a1h4424euarltlr40rih620",
+        "_name": "Business Analyst Jack Donaghy"
+      }
+    ],
+    "paging": {
+      "numTotal": 1,
+      "pageSize": 10,
+      "end": 0,
+      "begin": 0
+    }
+  }
+}

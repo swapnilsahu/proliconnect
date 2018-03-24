@@ -1,0 +1,47 @@
+{
+  "id": [
+    "5d38d320-9778-4939-889f-3df13637a046"
+  ],
+  "createdBy": [
+    "f0ebeb96-6cf0-4144-abba-115ff57b667a"
+  ],
+  "creationDate": [
+    1494247964481
+  ],
+  "lastModifiedBy": [
+    "f0ebeb96-6cf0-4144-abba-115ff57b667a"
+  ],
+  "lastModificationDate": [
+    1495205212340
+  ],
+  "name": [
+    "Mule DataBase"
+  ],
+  "url": [
+    "http://10.11.13.160:4400/term/5d38d320-9778-4939-889f-3df13637a046"
+  ],
+  "description": [
+    "Description in Mule DataBase as Test Data<br/>"
+  ],
+  "datatype": null,
+  "descriptiveExample": null,
+  "dataTypePrecision": null,
+  "scope": [
+    "Scope in Mule DataBase as Test Data<br/>"
+  ],
+  "location": [
+    "IUhuyfgeufygeilufgweoufhweoufhweiufh Test Data<br/>"
+  ],
+  "type": [
+    "00000000-0000-0000-0000-000000031006",
+    "Database"
+  ],
+  "status": [
+    "00000000-0000-0000-0000-000000005008",
+    "Candidate"
+  ],
+  "domain": [
+    "dbcc1f82-6eea-4d44-8a53-535f58565484",
+    "Mule Domain"
+  ]
+}

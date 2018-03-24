@@ -1,0 +1,489 @@
+<!doctype html>
+<html ng-app="app">
+<head>
+  <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular-touch.js"></script>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.3/angular-animate.js"></script>
+  <script src="http://ui-grid.info/docs/grunt-scripts/vfs_fonts.js"></script>
+  <script src="http://ui-grid.info/release/ui-grid.js"></script>
+  <link rel="stylesheet" href="http://ui-grid.info/release/ui-grid.css" type="text/css">
+  <style>
+    .header img {
+      float: right;
+      width: 300px;
+      height: 100px;
+    }
+    
+    .grid {
+      width: 100%;
+    }
+    
+    div.atag a:visited {
+      text-decoration: none;
+      color: blue;
+    }
+    
+    div.atag a:hover {
+      text-decoration: none;
+      color: red;
+    }
+    
+    div.atag a:focus {
+      text-decoration: none;
+      color: black;
+    }
+    
+    div.atag a:hover,
+    a:active {
+      text-decoration: none;
+      color: red
+    }
+    
+    .tablecolor {
+      background: #d6cbd3;
+    }
+    
+    .tableData {
+      column-count: 2;
+      -moz-column-count: 2;
+      -moz-column-gap: 10px;
+      -moz-column-fill: balance;
+      -webkit-column-count: 2;
+      text-align: center;
+    }
+    
+    table {
+      width: 100%;
+      text-align: left;
+    }
+    
+    th,
+    td {
+      padding: 8px;
+      text-align: left;
+      font-size: 14px;
+      font-weight: bold;
+      background: #d6cbd3;
+    }
+    
+    .Search {
+      text-align: center;
+      padding: 8px;
+    }
+    
+    #text {
+      font-size: 14px;
+      font-weight: bold;
+    }
+    
+    .watermark {
+      position: absolute;
+      top: 80px;
+      opacity: 0.25;
+      font-size: 3em;
+      width: 100%;
+      text-align: center;
+      z-index: 1000;
+    }
+    
+    .exception {
+      position: center;
+      float: left;
+      text-align: center;
+      opacity: 0.25;
+      font-size: 3em;
+      width: 100%;
+      height: 100%;
+      z-index: 1000;
+    }
+  </style>
+</head>
+<body>
+  <div ng-controller="MainCtrl">
+    <div class="header">
+      <img src="http://10.11.13.153:8081/collibraimage" alt="logo" />
+    </div>
+    <div ng-hide="community">
+      <div class="Search"><span id="text">Search:</span>
+        <input type="text" ng-model="searchKeyword">
+      </div>
+      <div>
+        <h2>Communities :</h2>
+      </div>
+      <div class="tablecolor">
+        <div class="tableData">
+          <table>
+            <div class="exception" ng-if="!responseData">No Response From Server
+            </div>
+            <tbody>
+              <tr ng-repeat="items in responseData | filter: searchKeyword">
+                <td>{{$index + 1}}</td>
+                <td>
+                  <a  href ng-click="displayData(items.resourceId,items.name)">{{ items.name }}</a>
+                  <div class="atag"><a href="http://10.11.13.160:4400/community/{{ items.resourceId }}" target="_blank"> Click here to see the value in Collibra DGC</a></div>
+                </td>
+                <td>
+                  {{ items.resourceType }}
+                </td>
+              </tr>
+            </tbody>
+          </table>		 
+          <br>
+        </div>
+      </div>
+      <br>
+	  <div>{{markit}}</div>
+      <div>
+        <span id="text">Page Size :</span>
+        <select class="size" type="text" ng-model="size" ng-change="pagesize(size)">
+          <option>5</option>
+          <option>10</option>
+          <option>20</option>
+          <option>30</option>
+          <option value="37">All</option>
+        </select>
+      </div>
+    </div>
+    <div ng-hide="domain">
+      <div class="Search"><span id="text">Search:</span>
+        <input type="text" ng-model="searchKeyword1">
+      </div>
+      <div>
+        <h2>Domains</h2>
+      </div>
+      <div class="tableData1">
+        <table>
+          <tbody>
+            <div class="exception" ng-if="!responseData1">No Response from Server !!
+            </div>
+              <tr ng-repeat="items in responseData1 | filter: searchKeyword1">
+              <td ng-if="items.name">
+                <a href ng-click="displaygridData(items.resourceId)">{{items.name}}</a>
+                <div class="atag"><a href="http://10.11.13.160:4400/domain/{{ items.resourceId }}" target="_blank"> Click here to see the value in Collibra DGC</a></div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <br>
+	  
+      <div>
+        <button ng-click="goback()" ng-hide="showbutton">Back</button>
+      </div>
+    </div>
+    <br>
+	<div ng-hide="selfrefferal">
+	 <h4>This is Self Referring Community !! Please Go Back and Click on the Link Provided to See the value in Collibra DGC.</h4>
+	 <div>
+        <button ng-click="goback()">Back</button>
+      </div>
+	  </div>
+    <div ng-hide="subcommunities">
+      <div class="Search"><span id="text">Search:</span>
+        <input type="text" ng-model="searchKeyword3">
+      </div>
+      <div>
+        <h2>Sub Communities</h2>
+      </div>
+      <div class="tableData3">
+        <table>
+          <div class="exception" ng-if="!responseData3">No Response From Server
+          </div>
+          <tbody>
+            <tr ng-repeat="items in responseData3 | filter: searchKeyword3">
+              <td>
+                <a href ng-click="displayData(items.resourceId)">{{ items.name}}</a>
+                <div class="atag"><a href="http://10.11.13.160:4400/community/{{ items.resourceId }}" target="_blank">Click here to see the value in Collibra DGC</a></div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <br>
+      <div>
+        <button ng-click="goback()" ng-hide="showbutton">Back</button>
+      </div>
+    </div>
+    <br>
+    <div ng-if="showgrid">
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <div ui-grid="gridOptions" ui-grid-selection ui-grid-grouping class="grid" ng-cloak>
+        <div class="watermark" ng-if="!gridOptions.data.length">No data available
+        </div>
+      </div>
+      <br>
+      <div id="container" ng-hide="dropdown">
+        <form name="myForm">
+          <select id="destination" name="destination" class="select1" ng-model="selectedItem">
+            <option value="00000000-0000-0000-0000-000000031101">Term</option>
+          </select>
+          <input type="button" id="idOfButton" name="submit" value="Submit" ng-disabled="isDisabled" ng-click="postdata(selectedItem)()">
+        </form>
+      </div>
+      <br>
+      <div>
+        <button ng-click="goback2()" ng-hide="showbutton">Back</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    var app = angular.module('app', ['ngTouch', 'ui.grid', 'ui.grid.selection', 'ui.grid.grouping']);
+    app.controller('MainCtrl', ['$scope', '$http', '$log', '$timeout', function($scope, $http, $log, $timeout, uiGridConstants, uiGridGroupingConstants) {
+      $scope.gridOptions = {
+        enableRowSelection: true,
+        enableSelectAll: true,
+        selectionRowHeaderWidth: 35,
+        enableGroupHeaderSelection: false,
+        rowHeight: 35,
+        showGridFooter: true
+      };
+      $scope.gridOptions.columnDefs = [{
+        name: 'name',
+        displayName: 'Name'
+      }, {
+        name: 'type.name',
+        displayName: 'Type'
+
+      }, {
+        name: 'url',
+        displayName: 'Link',
+        allowCellFocus: false,
+        cellTemplate: '<div>' +
+          '<a href="{{row.entity.url}}" target="_blank">Link</a>' +
+          '</div>'
+      }];
+      $scope.gridOptions.multiSelect = true;
+      $scope.community = false;
+      $scope.domain = true;
+      $scope.subcommunities = true;
+      $scope.showgrid = true;
+      $scope.dropdown = true;
+      $scope.selfrefferal = true;
+      
+      $scope.isDisabled = false;
+      var url = "http://10.11.13.153:8081/community/all";
+      var igcdata;
+      $scope.showgrid = false;
+      $http({
+          method: 'GET',
+          url: url,
+
+        })
+        .success(function(data) {
+          var newdata = [];
+          for (var i = 0; i < data.communityReference.length; i++) {
+            newdata[i] = {};
+            newdata[i].name = data.communityReference[i].name;
+            newdata[i].resourceId = data.communityReference[i].resourceId;
+          }
+          $scope.responseData = newdata;
+        })
+        .error(function(error, status) {
+          console.log(error, status);
+        });
+      $scope.pagesize = function(size) {
+        $scope.searchKeyword = "";
+        $http({
+            method: 'GET',
+            url: url,
+          })
+          .success(function(data) {
+            var newdata = [];
+            for (var i = 0; i < size; i++) {
+              newdata[i] = {};
+              newdata[i].name = data.communityReference[i].name;
+              newdata[i].resourceId = data.communityReference[i].resourceId;
+            }
+            console.log("log3", newdata);
+            $scope.responseData = newdata;
+			$scope.markit = $filter("filter")(newdata1, {name: MarkIt});
+          })
+          .error(function(error, status) {
+
+            console.log(error, status);
+          });
+      }
+      $scope.goback = function() {
+        window.location.reload(true);
+        $scope.showgrid = false;
+        $scope.community = false;
+        $scope.domain = true;
+        $scope.subcommunities = true;
+      }
+      $scope.goback2 = function() {
+        $scope.showgrid = false;
+        $scope.community = true;
+        $scope.domain = false;
+		$scope.subcommunities = true;
+      }
+      $scope.displayData = function(resourceId,name) {
+        $scope.community = true;
+        $scope.showgrid = false;
+        $scope.domain = false;
+        console.log("displayData ", resourceId)
+		console.log("displayData ", name)
+        $http({
+            method: 'GET',
+            url: 'http://10.11.13.153:8081/community?communityId=' + resourceId,
+          })
+          .success(function(data) {
+            var newdata1 = [];
+            var newdata2 = [];
+            if (data.subCommunityReferences.communityReference.length != '') {
+              $scope.subcommunities = false;
+              $scope.domain = true;
+              $scope.showgrid = false;
+              console.log("enetered subcommunities");
+              for (var i = 0; i < data.subCommunityReferences.communityReference.length; i++) {
+                newdata2[i] = {};
+                newdata2[i].name = data.subCommunityReferences.communityReference[i].name;
+                newdata2[i].resourceId = data.subCommunityReferences.communityReference[i].resourceId;
+              }
+              console.log("subcommunities", newdata2);
+              $scope.responseData3 = newdata2;
+
+            } else {
+              console.log("enetered domains");
+              $scope.domain = false;
+              $scope.subcommunities = true;
+              $scope.showgrid = false;
+			  if(name != 'MarkIt'){
+			    if (name != 'Reuters') {
+              for (var i = 0; i < data.vocabularyReferences.vocabularyReference.length; i++) {
+                newdata1[i] = {};
+                if (data.vocabularyReferences.vocabularyReference[i].name != "Snapshots" && data.vocabularyReferences.vocabularyReference[i].name != "Snapshot Configurations" && data.vocabularyReferences.vocabularyReference[i].name != "Issues") {
+                  newdata1[i].name = data.vocabularyReferences.vocabularyReference[i].name;
+                  newdata1[i].resourceId = data.vocabularyReferences.vocabularyReference[i].resourceId;
+                }
+              }
+			  }
+			  else {
+			   $scope.selfrefferal = false;
+                $scope.domain = true;
+			  }
+			  }
+			  else
+			  {
+	            $scope.selfrefferal = false;
+                $scope.domain = true;
+			  }
+              console.log("domains", JSON.stringify(newdata1));
+
+              $scope.responseData1 = newdata1;
+			  }
+			  
+            
+          })
+          .error(function(error, status) {
+            console.log(error, status);
+          });
+      }
+
+      $scope.displaygridData = function(resourceId) {
+        $scope.community = true;
+        $scope.domain = true;
+        $scope.subcommunities = true;
+        $scope.showgrid = true;
+        $http({
+            method: 'GET',
+            url: 'http://10.11.13.153:8081/AssetList?domainId=' + resourceId,
+
+          })
+          .success(function(data) {
+            console.log("griddata", data);
+            $scope.gridOptions.data = data;
+
+          })
+          .error(function(error, status) {
+            console.log(error, status);
+          });
+      }
+      $scope.info = {};
+      var selectedasset;
+      $scope.gridOptions.onRegisterApi = function(gridApi) {
+        console.log(selectedasset, gridApi.grid.selection.selectedCount);
+        gridApi.selection.on.rowSelectionChanged($scope, function(row) {
+          selectedasset = gridApi.selection.getSelectedRows();
+          console.log(selectedasset, gridApi.grid.selection.selectedCount);
+          if (gridApi.grid.selection.selectedCount === 0) {
+            $scope.dropdown = true;
+          } else {
+            $scope.dropdown = false;
+          }
+        });
+        gridApi.selection.on.rowSelectionChangedBatch($scope, function(rows) {
+          selectedasset = gridApi.selection.getSelectedRows();
+          console.log(selectedasset, gridApi.grid.selection.selectedCount);
+          if (gridApi.grid.selection.selectedCount === 0) {
+            $scope.dropdown = true;
+          } else {
+            $scope.dropdown = false;
+          }
+        });
+      };
+      $scope.postdata = function(items1) {
+        $timeout(1000);
+        $scope.isDisabled = true;
+        var assetid = items1;
+        var posturl = "http://10.11.13.153:8081/assetfront"
+        console.log(posturl);
+        $scope.entries = selectedasset;
+        console.log("selectedasset in entries", selectedasset);
+        var e = document.getElementById("destination");
+        $scope.strUser = e.options[e.selectedIndex].text;
+        console.log("asset", selectedasset.length);
+        var postdata = {};
+        var names = [];
+        postdata.terms = {}
+        postdata.terms.items = [];
+        for (i = 0; i < selectedasset.length; i++) {
+          postdata.terms.items[i] = {};
+          postdata.terms.items[i].id = selectedasset[i].id;
+          postdata.terms.items[i].createdBy = selectedasset[i].createdBy;
+          postdata.terms.items[i].creationDate = selectedasset[i].creationDate;
+          postdata.terms.items[i].lastModifiedBy = selectedasset[i].lastModifiedBy;
+          postdata.terms.items[i].lastModificationDate = selectedasset[i].lastModificationDate
+          postdata.terms.items[i].name = selectedasset[i].name;
+          postdata.terms.items[i].url = selectedasset[i].url;
+          postdata.terms.items[i].type = selectedasset[i].type;
+          postdata.terms.items[i].status = selectedasset[i].status;
+          postdata.terms.items[i].domain = selectedasset[i].domain;
+          names[i] = selectedasset[i].name;
+        }
+        console.log("postdata", JSON.stringify(postdata.terms.items));
+        console.log("postdata", (postdata.terms.items));
+        $.ajax({
+          url: posturl,
+          type: 'post',
+          dataType: 'json',
+          headers: ({
+            "Content-Type": "application/json"
+          }),
+          success: function(data) {
+            console.log("Response", data);
+           alert("The following have been migrated to Collibra DGC as Element : " + $scope.strUser +"-"+  "\n " + names.map(function(x,i){var number = [i+1]; var name= x; return (number+ ") "+name+("\n"));}).join(" "));
+            $scope.showgrid = true;
+            $scope.isDisabled = false;
+          },
+          error: function(data, err) {
+            console.log("err", err);
+            $timeout(50000);
+            alert("Sorry Due To Technical Issue the Records were unable to Move. Please Contact Support !! ");
+			
+            $scope.showgrid = true;
+            $scope.isDisabled = false;
+          },
+          data: JSON.stringify(postdata.terms.items)
+        });
+        console.log("finaldata", items1);
+      };
+    }]);
+  </script>
+</body>
+
+</html>

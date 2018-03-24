@@ -1,0 +1,11 @@
+{
+  "_type" : "term",
+  "short_description" : "Created term through Mule in DGC2IGC",
+  "status" : "ACCEPTED",
+  "parent_category" : "6662c0f2.ee6a64fe.1mdlmv34b.anfhlbg.dmjrjk.5ct1qigk0ndbkd22sqp8i",
+  "name" : "Test Flow6 Entry",
+  "custom_Formula" :"1+100",
+  "custom_Security Level": "11",
+  "custom_Priority": "High",
+  "example": "fgekufygekqwyfgwkeyfgwekufyfdsfesf"
+}

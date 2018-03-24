@@ -1,0 +1,93 @@
+{
+    "created_by": "Administrator IIS",
+    "modified_on": "2017-05-29T13:09:42Z",
+    "_context": [],
+    "created_on": "2017-04-17T09:50:03Z",
+    "terms": {
+        "items": [
+            {
+                "_type": "term",
+                "_id": "6662c0f2.e1b1ec6c.1mdlmv35e.1618tt1.8mb4gb.nahef1pustcmu5k10omdh",
+                "_url": "https://10.11.13.155:9445/ibm/iis/igc-rest/v1/assets/6662c0f2.e1b1ec6c.1mdlmv35e.1618tt1.8mb4gb.nahef1pustcmu5k10omdh",
+                "_name": "Export_01"
+            },
+            {
+                "_type": "term",
+                "_id": "6662c0f2.e1b1ec6c.1mdln1e8h.0ibdeqc.s1nm3u.vbt90ta1civ5asp5qetu5",
+                "_url": "https://10.11.13.155:9445/ibm/iis/igc-rest/v1/assets/6662c0f2.e1b1ec6c.1mdln1e8h.0ibdeqc.s1nm3u.vbt90ta1civ5asp5qetu5",
+                "_name": "Export_02"
+            },
+            {
+                "_type": "term",
+                "_id": "6662c0f2.e1b1ec6c.1mdln7r4n.tn8gjjo.rd5uri.25i83fvkbo5l4bhscd3dr",
+                "_url": "https://10.11.13.155:9445/ibm/iis/igc-rest/v1/assets/6662c0f2.e1b1ec6c.1mdln7r4n.tn8gjjo.rd5uri.25i83fvkbo5l4bhscd3dr",
+                "_name": "Mule Asset 01"
+            },
+            {
+                "_type": "term",
+                "_id": "6662c0f2.e1b1ec6c.1mdln7rs7.3tg971k.ghjkja.lnc3bpu3h6pst1tik15ij",
+                "_url": "https://10.11.13.155:9445/ibm/iis/igc-rest/v1/assets/6662c0f2.e1b1ec6c.1mdln7rs7.3tg971k.ghjkja.lnc3bpu3h6pst1tik15ij",
+                "_name": "Mule Asset 02"
+            }
+        ],
+        "paging": {
+            "numTotal": 4,
+            "pageSize": 10,
+            "end": 3,
+            "begin": 0
+        }
+    },
+    "_name": "DGC2IGC",
+    "_type": "category",
+    "_id": "6662c0f2.ee6a64fe.1mdlmv34b.anfhlbg.dmjrjk.5ct1qigk0ndbkd22sqp8i",
+    "short_description": "This is for Mulesoft Data Movement",
+    "modified_by": "Administrator IIS",
+    "_url": "https://10.11.13.155:9445/ibm/iis/igc-rest/v1/assets/6662c0f2.ee6a64fe.1mdlmv34b.anfhlbg.dmjrjk.5ct1qigk0ndbkd22sqp8i",
+    "name": "DGC2IGC",
+    "development_log": {
+        "items": [
+            {
+                "person": "Administrator IIS",
+                "new_state": "Synched",
+                "workflow_task": "NEW",
+                "user_id": "isadmin",
+                "comment": "Public comment",
+                "date": "2017-04-17T09:57:19Z",
+                "activity": "PUBLISHED"
+            },
+            {
+                "person": "Administrator IIS",
+                "new_state": "Approved",
+                "workflow_task": "NEW",
+                "user_id": "isadmin",
+                "comment": "Approved!",
+                "date": "2017-04-17T09:56:48Z",
+                "activity": "Approved"
+            },
+            {
+                "person": "Administrator IIS",
+                "new_state": "Pending Approval",
+                "workflow_task": "NEW",
+                "user_id": "isadmin",
+                "comment": "Approve!",
+                "date": "2017-04-17T09:56:20Z",
+                "activity": "SentForApproval"
+            },
+            {
+                "person": "Administrator IIS",
+                "new_state": "Draft",
+                "workflow_task": "NEW",
+                "user_id": "isadmin",
+                "comment": "Comment01",
+                "date": "2017-04-17T09:50:03Z",
+                "activity": "NEW"
+            }
+        ],
+        "paging": {
+            "numTotal": 4,
+            "beginIndex": 0,
+            "endIndex": 3,
+            "pageSize": 4
+        }
+    }
+}

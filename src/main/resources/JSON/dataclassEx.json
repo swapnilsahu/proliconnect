@@ -1,0 +1,17 @@
+{
+  "created_by": "Administrator IIS",
+  "modified_on": "2017-04-11T07:32:48Z",
+  "enabled": false,
+  "_context": [],
+  "created_on": "2017-04-11T07:32:48Z",
+  "_name": "Mule",
+  "class_code": "Mule ",
+  "_type": "data_class",
+  "data_class_type_single": "ValidValues",
+  "_id": "f4951817.e469fa50.1mdlmn80h.7f31v01.55qre3.548bku9kbgnbkrjn7ece5",
+  "short_description": "MULE TEST",
+  "modified_by": "Administrator IIS",
+  "_url": "https://10.11.13.155:9445/ibm/iis/igc-rest/v1/assets/f4951817.e469fa50.1mdlmn80h.7f31v01.55qre3.548bku9kbgnbkrjn7ece5",
+  "name": "Mule",
+  "valid_values_case_sensitive": false
+}

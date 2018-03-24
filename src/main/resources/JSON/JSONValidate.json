@@ -1,0 +1,30 @@
+{
+"terms": {
+        "items": [
+            {
+                "_type": "term",
+                "_id": "6662c0f2.e1b1ec6c.1mdlmv3b0.5k8s0tp.4benof.8g09qphoil3vgf1ndl0js",
+                "_url": "https://10.11.13.155:9445/ibm/iis/igc-rest/v1/assets/6662c0f2.e1b1ec6c.1mdlmv3b0.5k8s0tp.4benof.8g09qphoil3vgf1ndl0js",
+                "_name": "Export_01"
+            },
+            {
+                "_type": "term",
+                "_id": "6662c0f2.e1b1ec6c.1mdln1ej8.blj1j1h.b1h26i.k865fkqtjdi4a776cm0pd",
+                "_url": "https://10.11.13.155:9445/ibm/iis/igc-rest/v1/assets/6662c0f2.e1b1ec6c.1mdln1ej8.blj1j1h.b1h26i.k865fkqtjdi4a776cm0pd",
+                "_name": "Export_02"
+            },
+            {
+                "_type": "term",
+                "_id": "6662c0f2.e1b1ec6c.1mdln7rci.ho95lea.i0ckdj.09b1hpm04niijh09a8bb2",
+                "_url": "https://10.11.13.155:9445/ibm/iis/igc-rest/v1/assets/6662c0f2.e1b1ec6c.1mdln7rci.ho95lea.i0ckdj.09b1hpm04niijh09a8bb2",
+                "_name": "Mule Asset 01"
+            },
+            {
+                "_type": "term",
+                "_id": "6662c0f2.e1b1ec6c.1mdln7s47.rhi69v1.94bucc.vm7gfmgb9ihiiq41705p2",
+                "_url": "https://10.11.13.155:9445/ibm/iis/igc-rest/v1/assets/6662c0f2.e1b1ec6c.1mdln7s47.rhi69v1.94bucc.vm7gfmgb9ihiiq41705p2",
+                "_name": "Mule Asset 02"
+            }
+        ]
+    }
+}

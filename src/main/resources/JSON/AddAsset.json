@@ -1,0 +1,21 @@
+{
+	"createdBy": "324325325235",
+	"creationDate": 1,
+	"domain": {
+		"id": "dbcc1f82-6eea-4d44-8a53-535f58565484",
+		"name": "Mule Domain"
+	},
+	"id": "dwafaw22",
+	"lastModificationDate": 1,
+	"lastModifiedBy": "768937982",
+	"name": "Swapnil",
+	"status": {
+		"id": "12345568",
+		"name": "activestatus"
+	},
+	"type": {
+		"id": "00000000-0000-0000-0000-000000031026",
+		"name": "Data Element"
+	},
+	"url": "http://10.11.13.155:9445/"
+}
